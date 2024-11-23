@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-import express from 'express';         
+import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -12,9 +12,9 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
 
-app.get('/status', (req, res) => {
+app.post('/register', (req, res) => {
     res.send({
-        message: 'hello world!!'
+        message: `Hello ${req.body.email}! Your user was registered! Have fun!!`
     })
 })
 
