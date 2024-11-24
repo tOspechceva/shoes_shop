@@ -13,10 +13,11 @@ app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
 
-
 setupRoutes(app);
 
-db.sequelize.sync()
+
+// Синхронизируем базу данных и устанавливаем флаг force: true, чтобы сбросить таблицы (Осторожно, это приведёт к удалению данных)
+db.sequelize.sync({ force: true })
     .then(() => {
         app.listen(config.port, () => {
             console.log(`Server started on port ${config.port}`);

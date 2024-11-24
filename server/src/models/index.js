@@ -1,5 +1,5 @@
 // src/models/index.js
-import { Sequelize } from 'sequelize'; // Импортируем Sequelize и DataTypes
+import { Sequelize, DataTypes } from 'sequelize'; // Импортируем Sequelize и DataTypes
 import config from '../config/config.js'; // Импортируем конфигурацию базы данных
 
 // Инициализация подключения к базе данных
@@ -21,5 +21,9 @@ sequelize.authenticate().then(() => {
 const db = {};
 db.sequelize = sequelize;  // Экспортируем объект sequelize (не функцию)
 db.Sequelize = Sequelize;  // Экспортируем сам класс Sequelize
+
+import { userModel } from './userModel.js'; // Именованный импорт
+db.users = userModel(sequelize, DataTypes); // Инициализация модели
+
 
 export default db;  // Экспортируем db как default

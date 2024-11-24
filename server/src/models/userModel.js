@@ -1,5 +1,5 @@
 // Модель пользователя для базы данных
-module.exports = (sequelize, DataTypes) => {
+export const userModel = (sequelize, DataTypes) => {
     // Определение модели "user"
     const User = sequelize.define("user", {
         // Поле для имени пользователя
