@@ -7,6 +7,7 @@ const config = {
         options: {
             host: 'localhost',
             dialect: 'postgres',
+            logging: console.log, // Включает логирование запросов
         },
     },
 }

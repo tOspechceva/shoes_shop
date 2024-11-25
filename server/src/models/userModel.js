@@ -1,12 +1,8 @@
 // Модель пользователя для базы данных
-export const userModel = (sequelize, DataTypes) => {
+const User = (sequelize, DataTypes) => {
     // Определение модели "user"
-    const User = sequelize.define("user", {
-        // Поле для имени пользователя
-        userName: {
-            type: DataTypes.STRING, // Тип данных - строка
-            allowNull: false,       // Это поле обязательно для заполнения
-        },
+    const User = sequelize.define("User", {
+
         // Поле для email
         email: {
             type: DataTypes.STRING, // Тип данных - строка
@@ -24,6 +20,7 @@ export const userModel = (sequelize, DataTypes) => {
             timestamps: true,       // Включение автоматических полей для времени создания и обновления записи
         });
 
-    // Возвращаем определённую модель User для использования в других частях приложения
     return User;
 };
+
+export default User; // Экспортируем модель как дефолтную

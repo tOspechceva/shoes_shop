@@ -1,7 +1,5 @@
+import AuthenticationController from "./controllers/AuthenticationController.js"
+
 export const setupRoutes = (app) => {
-    app.post('/register', (req, res) => {
-        res.send({
-            message: `Hello ${req.body.email}! Your user was registered! Have fun!!`
-        })
-    })
+    app.post('/register', AuthenticationController.register)
 }
