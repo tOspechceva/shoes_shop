@@ -1,45 +1,66 @@
 <template>
-  <div>
-    <h1>Register</h1>
-    <input type="email" 
-           name="email" 
+  <Header></Header>
+  <Navigation></Navigation>
+    <div class="register_main">
+        <div class="register_container">
+            <h2>Регистрация</h2>
+            
+                <label for="email">Email:</label>
+                <input type="email" 
+                       name="email" 
+                       v-model="email"
+                       placeholder="email"/>
 
-           v-model="email"
+                <label for="password">Пароль:</label>
+                <input type="password" 
+                name="password" 
 
-           placeholder="email"/>
-    <br>
-    <br>
-    <input type="password" 
-    name="password" 
-    
-    v-model="password"
+                v-model="password"
 
-    placeholder="password"/>
-    <br>
-    <br>
-    <button @click="register">
-    Register</button>
-  </div>
+                placeholder="password"/>
+                <br>
+                <div class ="error" v-html="error" />
+                <br>
+                <button type="submit" @click="register">
+                Регистрация</button>
+          
+        </div>
+        <Footer></Footer>
+    </div>
 </template>
 
 <script>
 import AuthenticationService from'@/services/AuthenticationService'
+import Navigation from './page components/Navigation.vue';
+import Footer from './page components/Footer.vue';
+import Header from './page components/Header.vue';
 
 export default {
   name: 'Register',
+  components: {
+        Navigation,
+        Footer,
+        Header
+    },
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      error: null,
+      colore: null
     }
   },
   methods: {
-    async register(){
-      const response = await AuthenticationService.register({
-        email: this.email,
-        password:this.password
-      })
-      console.log(response.data)
+    async register() {
+      try {
+        const response = await AuthenticationService.register({
+          email: this.email,
+          password: this.password
+        })
+        this.error = 'Регистрация прошла успешно!!!'
+      } catch (error) {
+          this.error = error.response.data.error
+      }
     }
   }
 }
@@ -47,5 +68,56 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.error{
+  color: red;
+}
+
+.register_container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin-bottom: 20px; /* Добавляем отступ снизу */
+}
+h2 {
+    text-align: center;
+}
+input[type="text"], input[type="password"], input[type="email"], input[type="telephone"],
+input[type="gender"],input[type="birthdate"] {
+    width: 93%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.birthdate {
+    display: block;
+    margin-top: 20px;       /* Отступ сверху */
+    margin-bottom: 20px;    /* Отступ снизу */
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color:#2d4485;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button[type="submit"]:hover {
+    background-color:#2d4485;
+}
+
+.register_main {
+    display: flex;
+    justify-content: center;  /* Центрирование по горизонтали */
+    align-items: center;      /* Центрирование по вертикали */
+    flex: 1;                  /* Этот блок займет все оставшееся пространство */
+    padding: 20px;
+    text-align: left;
+ }
 
 </style>
