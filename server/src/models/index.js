@@ -2,7 +2,11 @@
 import { Sequelize, DataTypes } from 'sequelize'; // Импортируем Sequelize и DataTypes
 import config from '../config/config.js'; // Импортируем конфигурацию базы данных
 import User from './userModel.js'; // Именованный импорт
-
+import Product from './Product.js';
+import Season from './Season.js';
+import Material from './Material.js';
+import Insulation from './Insulation.js';
+import Manufacturer from './Manufacturer.js';
 // Инициализация подключения к базе данных
 const sequelize = new Sequelize(
     config.db.database,
@@ -21,8 +25,20 @@ sequelize.authenticate().then(() => {
 // Экспортируем подключение и Sequelize
 const db = {
     User: User(sequelize, DataTypes),
+    Product: Product(sequelize, Sequelize.DataTypes),
+    Season: Season(sequelize, Sequelize.DataTypes),
+    Material: Material(sequelize, Sequelize.DataTypes),
+    Insulation: Insulation(sequelize, Sequelize.DataTypes),
+    Manufacturer: Manufacturer(sequelize, Sequelize.DataTypes),
 };
 db.sequelize = sequelize;  // Экспортируем объект sequelize (не функцию)
 db.Sequelize = Sequelize;  // Экспортируем сам класс Sequelize
+
+// Устанавливаем связи
+Object.keys(db).forEach(modelName => {
+    if (db[modelName].associate) {
+        db[modelName].associate(db);
+    }
+});
 
 export default db;  // Экспортируем db как default
