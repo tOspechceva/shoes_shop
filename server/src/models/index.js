@@ -7,6 +7,11 @@ import Season from './Season.js';
 import Material from './Material.js';
 import Insulation from './Insulation.js';
 import Manufacturer from './Manufacturer.js';
+import Claps from './Claps.js';
+import Colore from './Colore.js';
+import Size from './Size.js';
+import Type from './Type.js';
+
 // Инициализация подключения к базе данных
 const sequelize = new Sequelize(
     config.db.database,
@@ -30,9 +35,14 @@ const db = {
     Material: Material(sequelize, Sequelize.DataTypes),
     Insulation: Insulation(sequelize, Sequelize.DataTypes),
     Manufacturer: Manufacturer(sequelize, Sequelize.DataTypes),
+    Claps: Claps(sequelize, Sequelize.DataTypes),
+    Colore: Colore(sequelize, Sequelize.DataTypes),
+    Size: Size(sequelize, Sequelize.DataTypes),
+    Type: Type(sequelize, Sequelize.DataTypes),
 };
 db.sequelize = sequelize;  // Экспортируем объект sequelize (не функцию)
 db.Sequelize = Sequelize;  // Экспортируем сам класс Sequelize
+
 
 // Устанавливаем связи
 Object.keys(db).forEach(modelName => {

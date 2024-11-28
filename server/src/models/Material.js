@@ -3,6 +3,10 @@ export default (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
+        }, link: {
+            type: DataTypes.STRING,
+            allowNull: true, // Ссылка может быть пустой
+            
         },
     }, {
         timestamps: false,

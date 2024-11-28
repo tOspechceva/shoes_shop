@@ -1,21 +1,15 @@
 export default (sequelize, DataTypes) => {
-    const Manufacturer = sequelize.define('Manufacturer', {
+    const Claps = sequelize.define('Claps', {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        country: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        link: {
+        }, link: {
             type: DataTypes.STRING,
             allowNull: true, // Ссылка может быть пустой
-            
         },
     }, {
         timestamps: false,
     });
 
-    return Manufacturer;
+    return Claps;
 };

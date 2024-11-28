@@ -59,9 +59,11 @@ export default (sequelize, DataTypes) => {
         link: {
             type: DataTypes.STRING,
             allowNull: true, // Ссылка может быть пустой
-            validate: {
-                isUrl: true, // Проверяем, что это корректная ссылка
-            },
+            
+        }, img: {
+            type: DataTypes.STRING,
+            allowNull: true, // Ссылка может быть пустой
+
         },
     }, {
         timestamps: true, // Включаем `createdAt` и `updatedAt`
@@ -69,3 +71,9 @@ export default (sequelize, DataTypes) => {
 
     return Product;
 };
+
+
+  
+
+      
+    
