@@ -2,7 +2,7 @@
     <div>
         <nav class="main-nav">
         <ul>
-        <li><router-link :to="{ name: 'home' }"> Главную </router-link></li>
+        <li><router-link :to="{ name: 'home' }"> Главная </router-link></li>
             <li class="catalog-menu">
                 <router-link :to="{ name: 'catalog' }"> Каталог </router-link>
                 <ul class="season-dropdown">
@@ -71,17 +71,13 @@
                     </li>
                 </ul>
             </li>
-            <li> <router-link to="/contact">Контакты</router-link></li>
-              
-            <li> <router-link :to="{ name:'login'}"> Войти </router-link></li>
+            <li> <router-link :to="{ name:'contact'}">Контакты</router-link></li>
             <li> <router-link :to="{ name: 'basket' }"> Корзина </router-link></li>
+            <li v-show="!$store.state.isUserLoggedIn"> <router-link :to="{ name:'login'}"  > Войти </router-link></li>
+            <li v-show="$store.state.isUserLoggedIn"> <router-link :to="{ name:'profile'}"> ЛК </router-link></li>
         </ul>
 
-        <form class="search-form" action="/search" method="GET">
-        <input type="text" name="query" placeholder="Поиск..." aria-label="Поиск по каталогу">
-        <button type="submit">Найти</button>
         
-    </form>
     </nav>
     </div>
 </template>
@@ -241,34 +237,7 @@ nav a:hover {
     display: block;
    
 }
-/* ===================== Стиль для поиска =============================== */
-.search-form {
-    display: flex;
-    align-items: center;
-}
 
-.search-form input[type="text"] {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px 0 0 4px;
-    outline: none;
-}
-
-.search-form button {
-    padding: 5px 10px;
-    border: none;
-    background-color: #333;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 0 4px 4px 0;
-}
-
-/* Увеличиваем поле поиска при фокусе */
-.search-form input[type="text"]:focus {
-    width: 200px;
-    /* Можно отрегулировать под нужный размер */
-    transition: width 0.3s ease;
-}
 
 
 

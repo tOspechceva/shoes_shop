@@ -1,73 +1,75 @@
 <template>
     <Header></Header>
     <Navigation></Navigation>
-    <div class = 'login_main'>
-        <div class="login_container">
-            <h2>Авторизация</h2>
-          
+    <div class="login_main">
+        <form @submit.prevent="login">
+            <div class="login_container">
+                <h2>Авторизация</h2>
                 <label for="email">Email:</label>
-                <input type="email" 
-                       name="email" 
-                       v-model="email"
-                       placeholder="email"/>
+                <input
+                    type="email"
+                    name="email"
+                    v-model="email"
+                    placeholder="email"
+                />
 
                 <label for="password">Пароль:</label>
-                <input type="password" 
-                name="password" 
-
-                v-model="password"
-
-                placeholder="password"/>
-                <br>
-                <div class ="error" v-html="error" />
-                <br>
-                <button type="submit" @click="login"> Войти</button>
-           
-            <!-- Добавляем ссылку на страницу регистрации -->
-        <p>Ещё нет аккаунта? <router-link :to="{ name:'register'}"> Зарегистрируйтесь </router-link></p>
-        </div>
-
+                <input
+                    type="password"
+                    name="password"
+                    v-model="password"
+                    placeholder="password"
+                />
+                <br />
+                <div class="error" v-if="error">{{ error }}</div>
+                <br />
+                <button type="submit">Войти</button>
+                <p>
+                    Ещё нет аккаунта?
+                    <router-link :to="{ name: 'register' }"> Зарегистрируйтесь </router-link>
+                </p>
+            </div>
+        </form>
     </div>
     <Footer></Footer>
 </template>
 
 <script>
-import AuthenticationService from'@/services/AuthenticationService'
-import Navigation from './page components/Navigation.vue'
-import Header from './page components/Header.vue'
+import AuthenticationService from '@/services/AuthenticationService';
+import Navigation from './page components/Navigation.vue';
+import Header from './page components/Header.vue';
 import Footer from './page components/Footer.vue';
-
 
 export default {
     name: 'Login',
-    components: {
-        Navigation,
-        Header,
-        Footer,
-    },
+    components: { Navigation, Header, Footer },
     data() {
         return {
             email: '',
             password: '',
-            error: null
+            error: null,
         };
     },
     methods: {
-        // Метод для обработки формы
         async login() {
-        try {
-        await AuthenticationService.login({
-          email: this.email,
-          password: this.password
-        })
-        this.error = 'Регистрация прошла успешно!!!'
-      } catch (error) {
-          this.error = error.response.data.error
-      }
-    }
-    }
-}
+            try {
+                const response = await AuthenticationService.login({
+                    email: this.email,
+                    password: this.password,
+                });
 
+                this.$store.dispatch('login', {
+                    user: response.data.user,
+                    token: response.data.token,
+                });
+
+                this.$router.push('/profile');
+            } catch (error) {
+                this.error = error.response?.data?.error || 'Ошибка авторизации';
+            }
+        },
+    },
+};
 </script>
 
 <style scoped>

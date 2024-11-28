@@ -2,9 +2,10 @@
   <Header></Header>
   <Navigation></Navigation>
     <div class="register_main">
+    <form @submit.prevent="register">
         <div class="register_container">
             <h2>Регистрация</h2>
-            
+
                 <label for="email">Email:</label>
                 <input type="email" 
                        name="email" 
@@ -16,7 +17,7 @@
                 name="password" 
 
                 v-model="password"
-
+                autocomplete="new-password"
                 placeholder="password"/>
                 <br>
                 <div class ="error" v-html="error" />
@@ -24,8 +25,10 @@
                 <button type="submit" @click="register">
                 Регистрация</button>
           
-        </div>
-        <Footer></Footer>
+      </div>
+       </form>
+      <Footer></Footer>
+      
     </div>
 </template>
 
@@ -57,7 +60,12 @@ export default {
           email: this.email,
           password: this.password
         })
-        this.error = 'Регистрация прошла успешно!!!'
+          // Вызываем login через Vuex с данными пользователя и токеном
+        this.$store.dispatch('register', {
+            user: response.data.user,
+            token: response.data.token,
+        });
+        this.$router.push('/login');
       } catch (error) {
           this.error = error.response.data.error
       }

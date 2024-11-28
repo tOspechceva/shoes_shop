@@ -196,7 +196,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
 h2 {
     background-color: #233870;            /* Задаём тёмно-синий фон для заголовка */
     color: #ffffff;                       /* Цвет текста белый */

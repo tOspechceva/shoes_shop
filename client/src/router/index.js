@@ -7,7 +7,7 @@ import Catalog from '../components/Catalog.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import Basket from '../components/Basket.vue'
-import Private_office from '../components/Private_office.vue'
+import Profile from '../components/Profile.vue'
 
 const routes = [{
   path: '/',
@@ -30,9 +30,9 @@ const routes = [{
   name: 'basket',
   component: Basket,
 }, {
-  path: '/private_office',
-  name: 'private_office',
-  component: Private_office,
+  path: '/profile',
+  name: 'profile',
+  component: Profile,
 }, {
   path: '/login',
   name: 'login',

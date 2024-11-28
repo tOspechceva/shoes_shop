@@ -1,4 +1,5 @@
 <template>
+  <Header></Header>
     <Navigation></Navigation>
    <div id="main">
     <div class="container_contact">
@@ -42,7 +43,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 footer {
         position: fixed;
         bottom: 0;
