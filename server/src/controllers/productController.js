@@ -18,6 +18,49 @@ export default {
         } catch  {
                 res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
         }
+    },
+
+    // 2. Получение списка всех продуктов
+    async get(req, res) {
+        try {
+            const products = await Product.findAll();
+            res.status(200).json(products);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    },
+
+    // 3. Обновление информации о продукте
+    async update(req, res) {
+        try {
+            const { id } = req.params;
+            const [updated] = await Product.update(req.body, { where: { id } });
+
+            if (updated) {
+                const updatedProduct = await Product.findByPk(id);
+                res.status(200).json(updatedProduct);
+            } else {
+                res.status(404).json({ error: 'Product not found' });
+            }
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    },
+
+    // 4. Удаление продукта
+    async delete(req, res){
+        try {
+            const { id } = req.params;
+            const deleted = await Product.destroy({ where: { id } });
+
+            if (deleted) {
+                res.status(204).send();
+            } else {
+                res.status(404).json({ error: 'Product not found' });
+            }
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
     }
 
 };

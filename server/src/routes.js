@@ -32,8 +32,22 @@ export const setupRoutes = (app) => {
         SizeController.add);
     app.post('/addType',
         TypeController.add);
+    
+    // Добавить продукт
     app.post('/addProduct',
         productController.add);
+
+    // Получить список продуктов
+    app.get('/getProduct',
+        productController.get);
+
+    // Обновить продукт
+    app.put('/putProduct/:id',
+        productController.update);
+
+    // Удалить продукт
+    app.delete('/deleteProduct/:id',
+        productController.delete);
 }
 
 
