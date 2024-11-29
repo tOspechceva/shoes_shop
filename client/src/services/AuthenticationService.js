@@ -7,10 +7,8 @@ export default {
     login(credentials) {
         return Api().post('login', credentials)
     },
-    
+    paginated(params) {
+        return Api().get('paginated', params); // Параметры передаются через `params`
+    },
 }
 
-//AuthenticationService.register({
-//    email: 'testing@mail.ru',
-//    password: '123456'
-//})

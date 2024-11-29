@@ -48,6 +48,10 @@ export const setupRoutes = (app) => {
     // Удалить продукт
     app.delete('/deleteProduct/:id',
         productController.delete);
+    
+    // Получение товаров с пагинацией
+    app.get('/paginated',
+        productController.getPaginated);
 }
 
 

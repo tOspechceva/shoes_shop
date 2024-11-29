@@ -48,7 +48,7 @@ export default {
     },
 
     // 4. Удаление продукта
-    async delete(req, res){
+    async delete(req, res) {
         try {
             const { id } = req.params;
             const deleted = await Product.destroy({ where: { id } });
@@ -61,6 +61,28 @@ export default {
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
-    }
+    },
+    async getPaginated(req, res){
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
 
+            const offset = (page - 1) * limit;
+
+            const { rows: products, count } = await Product.findAndCountAll({
+                limit: parseInt(limit),
+                offset: parseInt(offset),
+            });
+
+            res.status(200).json({
+                products,
+                total: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: parseInt(page),
+            });
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+    
 };

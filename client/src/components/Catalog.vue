@@ -38,7 +38,7 @@
                 <li class="season-item1">
                     Весна - Осень
                     <ul class="type-list1">
-                        <li><a href="#">Классические туфли</a></li>
+                        <li><a href="#">Туфли</a></li>
                         <li><a href="#">Спортивная</a></li>
                         <li><a href="#">Лоферы</a></li>
                         <li><a href="#">Макасины</a></li>
@@ -86,99 +86,41 @@
 
     <!-- Список товаров -->
     <div class="catalog">
-        <div class="product">
-            <img src="../img/pexels-rahulp9800-3286578.jpg" alt="Кроссовки">
-            <h2>Кроссовки</h2>
-            <p>Легкие и удобные кроссовки для активного отдыха.</p>
-            <p class="price">Цена: 5000 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-
-        <div class="product">
-            <img src="../img/bg-image.jpg" alt="Ботинки">
-            <h2>Ботинки</h2>
-            <p>Теплые ботинки для холодной погоды с водонепроницаемым покрытием.</p>
-            <p class="price">Цена: 7500 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-
-        <div class="product">
-            <img src="../img/зима.jpg" alt="Туфли">
-            <h2>Туфли</h2>
-            <p>Элегантные кожаные туфли для деловых встреч и мероприятий.</p>
-            <p class="price">Цена: 8000 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-
-        <div class="product">
-            <img src="../img/зима.jpg" alt="Туфли">
-            <h2>Туфли</h2>
-            <p>Элегантные кожаные туфли для деловых встреч и мероприятий.</p>
-            <p class="price">Цена: 8000 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-
-        <div class="product">
-            <img src="../img/демисезонные.webp" alt="Кроссовки">
-            <h2>Кроссовки</h2>
-            <p>Легкие и удобные кроссовки для активного отдыха.</p>
-            <p class="price">Цена: 5000 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-        
-        <div class="product">
-            <img src="../img/bg-image.jpg" alt="Ботинки">
-            <h2>Ботинки</h2>
-            <p>Теплые ботинки для холодной погоды с водонепроницаемым покрытием.</p>
-            <p class="price">Цена: 7500 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-        
-        <div class="product">
-            <img src="../img/зима.jpg" alt="Туфли">
-            <h2>Туфли</h2>
-            <p>Элегантные кожаные туфли для деловых встреч и мероприятий.</p>
-            <p class="price">Цена: 8000 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-        
-         <div class="product">
-            <img src="../img/bg-image.jpg" alt="Ботинки">
-            <h2>Ботинки</h2>
-            <p>Теплые ботинки для холодной погоды с водонепроницаемым покрытием.</p>
-            <p class="price">Цена: 7500 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-        
-        <div class="product">
-            <img src="../img/зима.jpg" alt="Туфли">
-            <h2>Туфли</h2>
-            <p>Элегантные кожаные туфли для деловых встреч и мероприятий.</p>
-            <p class="price">Цена: 8000 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
-        
-        <div class="product">
-            <img src="../img/зима.jpg" alt="Туфли">
-            <h2>Туфли</h2>
-            <p>Элегантные кожаные туфли для деловых встреч и мероприятий.</p>
-            <p class="price">Цена: 8000 руб.</p>
-            <a href="#" class="buy-btn">Купить</a>
-        </div>
+    <div class="product" v-for="product in products" :key="product.id">
+        <img :src="product.img" :alt="product.name" />
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p class="price">Цена: {{ product.price }} руб.</p>
+        <a href="#" class="buy-btn">Купить</a>
+    </div>
     </div>
 
     <!-- Навигация по страницам -->
     <div class="pagination">
-        <span class="page-number">1</span>
-        <span class="page-number">2</span>
-        <span class="page-number">3</span>
-        <!-- Добавьте больше номеров страниц по мере необходимости -->
-    </div>
+    <button 
+        :disabled="currentPage === 1" 
+        @click="handlePageChange(currentPage - 1)">
+        Предыдущая
+    </button>
+
+    <span v-for="page in totalPages" :key="page" class="page-number">
+        <button 
+            :class="{ active: page === currentPage }" 
+            @click="handlePageChange(page)">
+            {{ page }}
+        </button>
+    </span>
+
+    <button 
+        :disabled="currentPage === totalPages" 
+        @click="handlePageChange(currentPage + 1)">
+        Следующая
+    </button>
+</div>
 
     </main>
     </div>
    
-    <Footer></Footer>
 </template>
 
 <script>
@@ -186,6 +128,7 @@ import Navigation from './page components/Navigation.vue'
 import Header from './page components/Header.vue'
 import Footer from './page components/Footer.vue';
 import Filter from './page components/Filter.vue';
+import AuthenticationService from '@/services/AuthenticationService';
 export default {
     name: 'Catalog',//this is the name of the component
     components: {
@@ -193,10 +136,50 @@ export default {
         Header,
         Footer,
         Filter,
-  },
+    },
+    data() {
+        return {
+            products: [],      // Массив для товаров
+            currentPage: 1,    // Текущая страница
+            totalPages: 1,     // Общее количество страниц
+            itemsPerPage: 15,  // Количество товаров на странице
+        };
+    },
+    methods: {
+    async fetchProducts(page = 1) {
+        try {
+            const response = await AuthenticationService.paginated({
+                params: {
+                    page: page,
+                    limit: this.itemsPerPage,
+                },
+            });
+            const data = response.data; // Axios возвращает данные в `response.data`
+            this.products = data.products;
+            this.currentPage = data.currentPage;
+            this.totalPages = data.totalPages;
+        } catch (error) {
+            console.error('Ошибка при загрузке товаров:', error);
+        }
+    },
+    handlePageChange(page) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.fetchProducts(page);
+        }
+        },
+   
+},
+created() {
+    this.fetchProducts(); // Загрузка первой страницы при монтировании компонента
+},
 }
 </script>
 <style scoped>
+.pagination .page-number button.active {
+    font-weight: bold;
+    background-color: #ddd;
+}
+
 h2 {
     background-color: #233870;            /* Задаём тёмно-синий фон для заголовка */
     color: #ffffff;                       /* Цвет текста белый */
