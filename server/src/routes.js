@@ -53,6 +53,14 @@ export const setupRoutes = (app) => {
     app.get('/colore/:id',
         ColoreController.getById);
     
+    // Удаление цвета
+    app.delete('/deleteColore/:id',
+        ColoreController.delete);
+
+    //Обновление цвета
+    app.put('/putColore/:id',
+        ColoreController.update);
+    
     //=====================Manufacture==================
     // Добавить производителя
     app.post('/addManufacturer',
