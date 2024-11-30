@@ -74,7 +74,7 @@
             <li> <router-link :to="{ name:'contact'}">Контакты</router-link></li>
             <li> <router-link :to="{ name: 'basket' }"> Корзина </router-link></li>
             <li v-show="!$store.state.isUserLoggedIn"> <router-link :to="{ name:'login'}"  > Войти </router-link></li>
-            <li v-show="$store.state.isUserLoggedIn"> <router-link :to="{ name:'profile'}"> ЛК </router-link></li>
+            <li v-show="$store.state.isUserLoggedIn"> <router-link :to="{ name:'profile'}"> Личный кабинет </router-link></li>
         </ul>
 
         

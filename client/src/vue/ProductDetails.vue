@@ -1,117 +1,62 @@
 <template>
     <Header></Header>
     <Navigation></Navigation>
-     <div class="catalog-page">
-        
-    <Sidebar></Sidebar>
-    <main>
-    <h2>Каталог Мужской Обуви</h2>
-
-    <!-- Кнопка для открытия фильтров -->
-     
-    <Filter></Filter>
-    
-
-    <!-- Список товаров -->
-     <div class="catalog">
-    <div class="product" v-for="product in products" :key="product.id">
-      <img :src="product.img" :alt="product.name" />
-      <router-link :to="`/product/${product.id}`">
-        <h2>{{ product.name }}</h2>
-      </router-link>
-      <p>{{ product.description }}</p>
-      <p class="price">Цена: {{ product.price }} руб.</p>
-      <a href="#" class="buy-btn">Купить</a>
-    </div>
+    <div class="login_main">
+    <div class="catalog">
+ <div class="product">
+    <h1>{{ product.name }}</h1>
+    <img :src="product.img" :alt="product.name" />
+    <p>{{ product.description }}</p>
+    <p>Сезон: {{ product.Season?.name || 'Не указан' }}</p>
+    <p>Материал: {{ product.Material?.name || 'Не указан' }}</p>
+    <p v-if="product.Insulation">Утеплитель: {{ product.Insulation.name }}</p>
+    <p>Производитель: {{ product.Manufacturer?.name || 'Не указан' }}</p>
+    <p>Страна производителя: {{ product.Manufacturer?.country || 'Не указан' }}</p>
+    <p class="price"><b>Цена:</b> {{ product.price }} руб.</p>
+    <a href="#" class="buy-btn">Купить</a>
   </div>
-
-    <!-- Навигация по страницам -->
-    <div class="pagination">
-    <button 
-        :disabled="currentPage === 1" 
-        @click="handlePageChange(currentPage - 1)">
-        Предыдущая
-    </button>
-
-    <span v-for="page in totalPages" :key="page" class="page-number">
-        <button 
-            :class="{ active: page === currentPage }" 
-            @click="handlePageChange(page)">
-            {{ page }}
-        </button>
-    </span>
-
-    <button 
-        :disabled="currentPage === totalPages" 
-        @click="handlePageChange(currentPage + 1)">
-        Следующая
-    </button>
-</div>
-
-    </main>
-    </div>
-   
+  </div>
+  </div>
+    <Footer></Footer>
 </template>
 
 <script>
-import Navigation from './page components/Navigation.vue'
-import Header from './page components/Header.vue'
-import Footer from './page components/Footer.vue';
-import Filter from './page components/Filter.vue';
-import Sidebar from './page components/Sidebar.vue'
+import Navigation from '../components/Navigation.vue'
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue';
 import AuthenticationService from '@/services/AuthenticationService';
+
 export default {
-    name: 'Catalog',//this is the name of the component
+    name: 'ProductDetails',
     components: {
         Navigation,
         Header,
         Footer,
-        Filter,
-        Sidebar
     },
-    data() {
-        return {
-            products: [],      // Массив для товаров
-            currentPage: 1,    // Текущая страница
-            totalPages: 1,     // Общее количество страниц
-            itemsPerPage: 15,  // Количество товаров на странице
-        };
+     props: {
+    id: {
+      type: String,
+      required: true,
     },
-    methods: {
-    async fetchProducts(page = 1) {
-        try {
-            const response = await AuthenticationService.paginated({
-                params: {
-                    page: page,
-                    limit: this.itemsPerPage,
-                },
-            });
-            const data = response.data; // Axios возвращает данные в `response.data`
-            this.products = data.products;
-            this.currentPage = data.currentPage;
-            this.totalPages = data.totalPages;
-        } catch (error) {
-            console.error('Ошибка при загрузке товаров:', error);
-        }
-    },
-    handlePageChange(page) {
-        if (page >= 1 && page <= this.totalPages) {
-            this.fetchProducts(page);
-        }
-        },
-   
-},
-created() {
-    this.fetchProducts(); // Загрузка первой страницы при монтировании компонента
-},
+  },
+  data() {
+    return {
+      product: {}, // Детали товара
+    };
+  },
+  async created() {
+    try {
+      const response = await AuthenticationService.getProductById(this.id);
+        this.product = response.data;
+        console.log(response.data);
+    } catch (error) {
+      console.error('Ошибка при загрузке товара:', error);
+    }
+  },
 }
 </script>
-<style scoped>
-.pagination .page-number button.active {
-    font-weight: bold;
-    background-color: #ddd;
-}
 
+<style scoped>
 h2 {
     background-color: #233870;            /* Задаём тёмно-синий фон для заголовка */
     color: #ffffff;                       /* Цвет текста белый */
@@ -143,9 +88,11 @@ h2 {
     border-radius: 5px;         /* Скругление углов рамки */
     padding: 15px;              /* Внутренние отступы для блока товара */
     background-color: #fff;   /* Белый фон для каждого товара */
+      
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
     
 }
-
 .product img {
     width: 200px;           /* Фиксированная ширина для изображений товаров */
     height: 200px;          /* Фиксированная высота для изображений товаров */
@@ -161,14 +108,11 @@ h2 {
 .product p {
     font-size: 16px;       /* Размер шрифта для описания товара */
     margin-bottom: 10px;   /* Отступ снизу для описания товара */
+     text-align: left; 
 }
 
 .product:hover img {
-    transform: scale(1.2);
-}
-
-.price {
-    font-weight: bold;      /* Жирный шрифт для цены товара */
+    transform: scale(1.5);
 }
 
 .buy-btn {
@@ -185,52 +129,12 @@ h2 {
     background-color: #0056b3;  /* При наведении фон кнопки становится темнее */
 }
 
-
-.pagination {
+.login_main {
     display: flex;
-    justify-content: center;
-    /* Центрирование пагинации по горизонтали */
-    margin-top: 20px;
-    /* Отступ сверху */
-    padding: 10px;
-}
-
-.page-number {
-    display: inline-block;
-    margin: 0 5px;
-    /* Отступ между цифрами */
-    padding: 8px 12px;
-    border: 1px solid #233870;
-    border-radius: 5px;
-    color: #233870;
-    cursor: pointer;
-    background-color: #fff;  /* Цвет фона панели – белый */
-}
-
-.page-number.active,
-/* Активная страница */
-.page-number:hover {
-    background-color: #233870;
-    color: white;
-    
-}
-
- main {
-
-     justify-content: center;
-     /* Центрирование по горизонтали */
-     align-items: center;
-     /* Центрирование по вертикали */
-     flex: 08;
-     /* Этот блок займет все оставшееся пространство */
-     padding: 20px;
-     text-align: center;
+    justify-content: center;  /* Центрирование по горизонтали */
+    align-items: center;      /* Центрирование по вертикали */
+    flex: 1;                  /* Этот блок займет все оставшееся пространство */
+    padding: 20px;
+    text-align: center;
  }
-
-
- .catalog-page {
-     display: flex;
- }
-
- 
 </style>

@@ -3,14 +3,15 @@ import { Sequelize, DataTypes } from 'sequelize'; // Импортируем Sequ
 import config from '../config/config.js'; // Импортируем конфигурацию базы данных
 import User from './userModel.js'; // Именованный импорт
 import Product from './Product.js';
-import Season from './Season.js';
-import Material from './Material.js';
-import Insulation from './Insulation.js';
-import Manufacturer from './Manufacturer.js';
-import Claps from './Claps.js';
-import Colore from './Colore.js';
-import Size from './Size.js';
-import Type from './Type.js';
+
+import Season from './description/Season.js';
+import Material from './description/Material.js';
+import Insulation from './description/Insulation.js';
+import Manufacturer from './description/Manufacturer.js';
+import Claps from './description/Claps.js';
+import Colore from './description/Colore.js';
+import Size from './description/Size.js';
+import Type from './description/Type.js';
 
 import ProductColore from './manyToMany/ProductColore.js';
 import ProductClaps from './manyToMany/ProductClaps.js';
@@ -35,6 +36,7 @@ sequelize.authenticate().then(() => {
 const db = {
     User: User(sequelize, DataTypes),
     Product: Product(sequelize, Sequelize.DataTypes),
+    
     Season: Season(sequelize, Sequelize.DataTypes),
     Material: Material(sequelize, Sequelize.DataTypes),
     Insulation: Insulation(sequelize, Sequelize.DataTypes),

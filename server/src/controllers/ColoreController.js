@@ -15,9 +15,53 @@ export default {
             res.send({
                 colore: colore
             });
-        } catch  {
-                res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
+        } catch {
+            res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
         }
-    }
+    },
+    async addArray(req, res) {
+        try {
+            const { colors } = req.body; // Предполагается, что в запросе передан массив цветов
+            if (!Array.isArray(colors)) {
+                return res.status(400).send({ error: 'Должен быть передан массив цветов.' });
+            }
 
+            // Создаем записи в базе данных для каждого цвета
+            const createdColors = await Promise.all(colors.map(color => Colore.create({ name: color })));
+
+            res.send({
+                colors: createdColors
+            });
+        } catch (error) {
+            console.error('Ошибка при добавлении цветов:', error);
+            res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
+        }
+    },
+    async get(req, res) {
+        try {
+            const colore = await Colore.findAll();
+            res.status(200).json(colore);
+        } catch {
+            res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
+        }
+    },
+    async getById(req, res) {
+        try {
+            const { id } = req.params;
+            console.log('Request for colore ID:', id);
+
+            const colore = await Colore.findByPk(id);
+
+            if (!colore) {
+                return res.status(404).json({ error: 'Цвет не найден' });
+            }
+
+            res.json(colore);
+        } catch (error) {
+            console.error('Ошибка при получении цвета:', error);
+            res.status(500).json({ error: 'Не удалось получить цвет.' });
+        }
+    },
+    
+    
 };

@@ -27,17 +27,17 @@
           
       </div>
        </form>
-      <Footer></Footer>
+   
       
     </div>
+       <Footer></Footer>
 </template>
 
 <script>
 import AuthenticationService from'@/services/AuthenticationService'
-import Navigation from './page components/Navigation.vue';
-import Footer from './page components/Footer.vue';
-import Header from './page components/Header.vue';
-
+import Navigation from '../components/Navigation.vue'
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue';
 export default {
   name: 'Register',
   components: {

@@ -57,11 +57,8 @@ export default (sequelize, DataTypes) => {
                 key: 'id',
             },
         },
-        link: {
-            type: DataTypes.STRING,
-            allowNull: true, // Ссылка может быть пустой
-            
-        }, img: {
+        
+        img: {
             type: DataTypes.STRING,
             allowNull: true, // Ссылка может быть пустой
 
@@ -75,7 +72,7 @@ export default (sequelize, DataTypes) => {
         Product.belongsTo(models.Insulation, { foreignKey: 'id_insulation' });
         Product.belongsTo(models.Manufacturer, { foreignKey: 'id_manufacturer' });
     };
-    
+
     return Product;
 };
 

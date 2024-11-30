@@ -84,7 +84,7 @@ export default {
             res.status(400).json({ error: error.message });
         }
     },
-    async getProductById(req, res) {
+    async getById(req, res) {
         try {
             const { id } = req.params;
             console.log('Request for product ID:', id);

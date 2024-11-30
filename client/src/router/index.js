@@ -1,14 +1,15 @@
 // src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from '../components/Home.vue'
-import Contact from '../components/Contact.vue'
-import Catalog from '../components/Catalog.vue'
-import Login from '../components/Login.vue'
-import Register from '../components/Register.vue'
-import Basket from '../components/Basket.vue'
-import Profile from '../components/Profile.vue'
-import ProductDetails from '../components/ProductDetails.vue'
+import Home from '../vue/Home.vue'
+import Contact from '../vue/Contact.vue'
+import Catalog from '../vue/Catalog.vue'
+import Login from '../vue/Login.vue'
+import Register from '../vue/Register.vue'
+import Basket from '../vue/Basket.vue'
+import Profile from '../vue/Profile.vue'
+import ProductDetails from '../vue/ProductDetails.vue'
+import addProject from '@/vue/admin/addProject.vue'
 
 const routes = [{
   path: '/',
@@ -43,6 +44,11 @@ const routes = [{
   name: 'ProductDetails',
   component: ProductDetails,
   props: true, // Пропускаем `id` как пропс в компонент
+  },
+  {
+    path: '/addProject',
+    name: 'addProject',
+    component: addProject,
   },
 ]
 const router = createRouter({
