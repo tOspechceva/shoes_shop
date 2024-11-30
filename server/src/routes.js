@@ -49,7 +49,7 @@ export const setupRoutes = (app) => {
     app.get('/getColore',
         ColoreController.get);
     
-    // Получение товар по id
+    // Получение цвета по id
     app.get('/colore/:id',
         ColoreController.getById);
     
@@ -81,6 +81,25 @@ export const setupRoutes = (app) => {
     app.post('/addType',
         TypeController.add);
     
+    // Добавить массив типов
+    app.post('/addArrayType',
+        TypeController.addArray);
+
+    // Получить список типов
+    app.get('/getType',
+        TypeController.get);
+
+    // Получение типа по id
+    app.get('/type/:id',
+        TypeController.getById);
+
+    // Удаление типа
+    app.delete('/deleteType/:id',
+        TypeController.delete);
+
+    //Обновление типа
+    app.put('/putType/:id',
+        TypeController.update);
     //======================Product=====================
     // Добавить продукт
     app.post('/addProduct',

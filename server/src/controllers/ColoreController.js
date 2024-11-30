@@ -33,7 +33,7 @@ export default {
                 colors: createdColors
             });
         } catch (error) {
-            console.error('Ошибка при добавлении цветов:', error);
+            console.error('Ошибка при добавлении массива цветов:', error);
             res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
         }
     },
