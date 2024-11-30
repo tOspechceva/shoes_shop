@@ -12,6 +12,10 @@ import Colore from './Colore.js';
 import Size from './Size.js';
 import Type from './Type.js';
 
+import ProductColore from './manyToMany/ProductColore.js';
+import ProductClaps from './manyToMany/ProductClaps.js';
+import ProductSize from './manyToMany/ProductSize.js';
+import ProductType from './manyToMany/ProductType.js';
 // Инициализация подключения к базе данных
 const sequelize = new Sequelize(
     config.db.database,
@@ -39,7 +43,15 @@ const db = {
     Colore: Colore(sequelize, Sequelize.DataTypes),
     Size: Size(sequelize, Sequelize.DataTypes),
     Type: Type(sequelize, Sequelize.DataTypes),
+
+    ProductColore: ProductColore(sequelize),
+    ProductClaps: ProductClaps(sequelize),
+    ProductSize: ProductSize(sequelize),
+    ProductType: ProductType(sequelize),
+    
 };
+
+
 db.sequelize = sequelize;  // Экспортируем объект sequelize (не функцию)
 db.Sequelize = Sequelize;  // Экспортируем сам класс Sequelize
 

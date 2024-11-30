@@ -52,6 +52,9 @@ export const setupRoutes = (app) => {
     // Получение товаров с пагинацией
     app.get('/paginated',
         productController.getPaginated);
+    
+    app.get('/products/:id',
+        productController.getProductById);
 }
 
 

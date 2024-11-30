@@ -8,6 +8,7 @@ import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import Basket from '../components/Basket.vue'
 import Profile from '../components/Profile.vue'
+import ProductDetails from '../components/ProductDetails.vue'
 
 const routes = [{
   path: '/',
@@ -37,7 +38,12 @@ const routes = [{
   path: '/login',
   name: 'login',
   component: Login,
-},
+  },
+  {path: '/product/:id',
+  name: 'ProductDetails',
+  component: ProductDetails,
+  props: true, // Пропускаем `id` как пропс в компонент
+  },
 ]
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

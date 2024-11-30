@@ -12,5 +12,8 @@ export default (sequelize, DataTypes) => {
         timestamps: false,
     });
 
+    Material.associate = (models) => {
+        Material.hasMany(models.Product, { foreignKey: 'id_material' });
+    };
     return Material;
 };

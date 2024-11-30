@@ -6,7 +6,7 @@
 //import Manufacturer from '../models/Manufacturer.js';
 import bd from '../models/index.js';
 
-const { Product } = bd;
+const { Product, Season, Material, Insulation, Manufacturer } = bd;
 
 export default {
     async add(req, res) {
@@ -83,6 +83,31 @@ export default {
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
-    }
-    
+    },
+    async getProductById(req, res) {
+        try {
+            const { id } = req.params;
+            console.log('Request for product ID:', id);
+
+            // Найти товар с включением связанных данных
+            const product = await Product.findByPk(id, {
+                include: [
+                    { model: Season, attributes: ['name'] }, // Получить название сезона
+                    { model: Material, attributes: ['name'] }, // Получить название материала
+                    { model: Insulation, attributes: ['name'] }, // Получить название утеплителя
+                    { model: Manufacturer, attributes: ['name', 'country'] }, // Получить имя производителя
+                ],
+            });
+
+            if (!product) {
+                return res.status(404).json({ error: 'Товар не найден' });
+            }
+
+            res.json(product);
+        } catch (error) {
+            console.error('Ошибка при получении товара:', error);
+            res.status(500).json({ error: 'Не удалось получить товар.' });
+        }
+    },
+
 };

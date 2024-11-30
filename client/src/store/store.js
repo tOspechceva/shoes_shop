@@ -3,7 +3,7 @@ import { createStore } from 'vuex';
 export default createStore({
     state: {
         currentRoute: null, // Для хранения текущего маршрута
-        user: JSON.parse(localStorage.getItem('user')) || null, // Инициализация из LocalStorage
+        //user: JSON.parse(localStorage.getItem('user')) || null, // Инициализация из LocalStorage
         token: localStorage.getItem('token') || null, // Токен из LocalStorage,
         isUserLoggedIn: localStorage.getItem('token') !== null,
     },

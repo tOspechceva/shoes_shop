@@ -1,3 +1,4 @@
+
 export default (sequelize, DataTypes) => {
     const Product = sequelize.define('Product', {
         name: {
@@ -68,7 +69,13 @@ export default (sequelize, DataTypes) => {
     }, {
         timestamps: true, // Включаем `createdAt` и `updatedAt`
     });
-
+    Product.associate = (models) => {
+        Product.belongsTo(models.Season, { foreignKey: 'id_season' });
+        Product.belongsTo(models.Material, { foreignKey: 'id_material' });
+        Product.belongsTo(models.Insulation, { foreignKey: 'id_insulation' });
+        Product.belongsTo(models.Manufacturer, { foreignKey: 'id_manufacturer' });
+    };
+    
     return Product;
 };
 
