@@ -36,6 +36,26 @@ export const setupRoutes = (app) => {
     app.post('/addClaps',
         ClapsController.add);
     
+    // Добавить массив застежек
+    app.post('/addArrayClaps',
+        ClapsController.addArray);
+
+    // Получить список застежек
+    app.get('/getClaps',
+        ClapsController.get);
+
+    // Получение застежки по id
+    app.get('/claps/:id',
+        ClapsController.getById);
+
+    // Удаление застежки
+    app.delete('/deleteClaps/:id',
+        ClapsController.delete);
+
+    //Обновление застежки
+    app.put('/putClaps/:id',
+        ClapsController.update);
+    
     //====================Colore========================
     // Добавить цвет
     app.post('/addColore',
