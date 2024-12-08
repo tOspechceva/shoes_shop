@@ -8,5 +8,9 @@ export default (sequelize, DataTypes) => {
         timestamps: false,
     });
 
+    Size.associate = (models) => {
+        Size.belongsToMany(models.Product, { through: 'ProductSize' });
+    };
+
     return Size;
 };

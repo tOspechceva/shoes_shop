@@ -11,6 +11,9 @@ import SizeController from "./controllers/SizeController.js"
 import TypeController from "./controllers/TypeController.js"
 import productController from "./controllers/productController.js"
 import ProductTypeController from "./controllers/manyToMany/ProductTypeController.js"
+import ProductSizeController from "./controllers/manyToMany/ProductSizeController.js"
+import ProductColoreController from "./controllers/manyToMany/ProductColoreController.js"
+import ProductClapsController from "./controllers/manyToMany/ProductClapsController.js"
 
 export const setupRoutes = (app) => {
     //=======================User=======================
@@ -247,6 +250,11 @@ export const setupRoutes = (app) => {
     // Получение товар по id
     app.get('/products/:id',
         productController.getById);
+    
+    app.get('/filtered',
+        productController.getFiltered
+    )
+   
     //======================================================
     app.post('/products/set-types',
         ProductTypeController.setTypesForProduct
@@ -254,6 +262,25 @@ export const setupRoutes = (app) => {
     app.get('/products/types/:id',
         ProductTypeController.getTypesForProduct
     );
+    //======================================================
+    app.post('/products/set-size',
+        ProductSizeController.setSizeForProduct
+    );
+    app.get('/products/size/:id',
+        ProductSizeController.getSizeForProduct
+    );
+    //======================================================
+    app.post('/products/set-colore',
+        ProductColoreController.setColoreForProduct);
+    app.get('/products/colore/:id',
+        ProductColoreController.getColoreForProduct);
+    
+    //======================================================
+    app.post('/products/set-claps',
+        ProductClapsController.setClapsForProduct);
+    app.get('/products/claps/:id',
+        ProductClapsController.getClapsForProduct);
+    
 }
 
 

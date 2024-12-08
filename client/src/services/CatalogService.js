@@ -7,4 +7,7 @@ export default {
     getProductById(id) {
         return Api().get(`/products/${id}`);
     },
+    filtered(params){
+        return Api().get('/filtered', params)
+    },
 }

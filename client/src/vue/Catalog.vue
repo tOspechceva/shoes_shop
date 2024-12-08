@@ -81,6 +81,19 @@ export default {
         };
     },
     methods: {
+    async filterProducts(season, type) {
+        try {
+          const response = await CatalogService.filtered({
+            params: { season, type },
+          });
+          const data = response.data;
+          this.products = data.products;
+          this.currentPage = 1; // Сбрасываем текущую страницу
+          this.totalPages = data.totalPages;
+        } catch (error) {
+          console.error('Ошибка при фильтрации товаров:', error);
+        }
+    },
     async fetchProducts(page = 1) {
         try {
             const response = await CatalogService.paginated({
@@ -102,11 +115,11 @@ export default {
             this.fetchProducts(page);
         }
         },
-   created() {
+  
+},
+ created() {
     this.fetchProducts(); // Загрузка первой страницы при монтировании компонента
 },
-},
-
 }
 </script>
 <style scoped>

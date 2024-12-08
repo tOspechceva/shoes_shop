@@ -2,78 +2,91 @@
    <aside class="sidebar">
             <h2>Сезоны</h2>
             <ul class="season-list1">
-                <li class="season-item1">
-                    Зима
-                    <ul class="type-list1">
-                        <li><a href="#">Сапоги</a></li>
-                        <li><a href="#">Ботинки</a></li>
-                        <li><a href="#">Классическая обувь</a></li>
-                        <li><a href="#">Уги</a></li>
-                        <li><a href="#">Берцы</a></li>
-                        <li><a href="#">Дутики</a></li>
-                        <li><a href="#">Спорт</a></li>
-                        <li><a href="#">Кеды</a></li>
-                        <li><a href="#">Комфорт обувь</a></li>
-                        <li><a href="#">Резиновая обувь</a></li>
-                        <li><a href="#">Туфли</a></li>
-                        <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                        <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                    </ul>
-                </li>
-                <li class="season-item1">
-                    Демисезон
-                    <ul class="type-list1">
-                        <li><a href="#">Классическая обувь</a></li>
-                        <li><a href="#">Спорт</a></li>
-                        <li><a href="#">Кеды</a></li>
-                        <li><a href="#">Берцы</a></li>
-                        <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                        <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                
-                    </ul>
-                </li>
-                <li class="season-item1">
-                    Весна - Осень
-                    <ul class="type-list1">
-                        <li><a href="#">Туфли</a></li>
-                        <li><a href="#">Спортивная</a></li>
-                        <li><a href="#">Лоферы</a></li>
-                        <li><a href="#">Макасины</a></li>
-                        <li><a href="#">Комфорт обувь</a></li>
-                        <li><a href="#">Кеды</a></li>
-                        <li><a href="#">Резиновая обувь</a></li>
-                        <li><a href="#">Берцы</a></li>
-                        <li><a href="#">Казаки</a></li>
-                        <li><a href="#">Броги</a></li>
-                        <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                        <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                    </ul>
-                </li>
-                <li class="season-item1">
-                    Лето
-                    <ul class="type-list1">
-                        <li><a href="#">Классические туфли</a></li>
-                        <li><a href="#">Комфорт обувь</a></li>
-                        <li><a href="#">Сандали</a></li>
-                        <li><a href="#">Шлепанцы</a></li>
-                        <li><a href="#">Кеды</a></li>
-                        <li><a href="#">Спорт</a></li>
-                        <li><a href="#">Резиновая обувь</a></li>
-                        <li><a href="#">Сабо</a></li>
-                        <li><a href="#">Лоферы</a></li>
-                        <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                        <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                    </ul>
-                </li>
-                <!-- Добавьте другие сезоны по аналогии -->
-            </ul>
+    <li class="season-item1" v-for="season in seasons" :key="season.name">
+    {{ season.name }}
+        <ul class="type-list1">
+            <li  v-for="type in season.types" :key="type.name"
+                 @click="filterProducts(season.name, type.name)"
+                style="cursor: pointer">
+                <a>{{ type.name }}</a>
+            </li>
+        </ul>
+     </li>
+    </ul>
         </aside>
-    
 </template>
 
 <script>
 export default {
     name: 'Sidebar',
+    data() {
+         return {
+           seasons: [
+             {
+               name: 'Зима',
+               types: [
+                { name: 'Сапоги' },
+                { name: 'Ботинки' },
+                { name: 'Классическая обувь' },
+                { name: 'Уги' },
+                { name: 'Берцы' },
+                { name: 'Дутики' },
+                { name: 'Спорт' },
+                { name: 'Кеды' },
+                { name: 'Комфорт обувь' },
+                { name: 'Резиновая обувь' },
+                { name: 'Туфли' },
+                { name: 'Большие размеры 45 - 49 размер' },
+                { name: 'Подростковая 35 - 41 размер' },
+               ],
+             },
+             {
+               name: 'Лето',
+               types: [
+                    { name: 'Классические туфли' },
+                    { name: 'Комфорт обувь' },
+                    { name: 'Сандали' },
+                    { name: 'Шлепанцы' },
+                    { name: 'Кеды' },
+                    { name: 'Спорт' },
+                    { name: 'Резиновая обувь' },
+                    { name: 'Сабо' },
+                    { name: 'Лоферы' },
+                    { name: 'Большие размеры 45 - 49 размер' },
+                    { name: 'Подростковая 35 - 41 размер' },
+               ],
+            },
+            {
+                name: ' Весна - Осень',
+                types: [
+                         { name: 'Туфли' },
+                         { name: 'Спортивная' },
+                         { name: 'Лоферы' },
+                         { name: 'Макасины' },
+                         { name: 'Комфорт обувь' },
+                         { name: 'Кеды' },
+                         { name: 'Резиновая обувь' },
+                         { name: 'Берцы' },
+                         { name: 'Казаки' },
+                         { name: 'Броги' },
+                         { name: 'Большие размеры 45 - 49 размер' },
+                         { name: 'Подростковая 35 - 41 размер' },
+               ],
+             },
+            {
+                name: 'Демисезон',
+                types: [
+                    { name: 'Классическая обувь' },
+                    { name: 'Спорт' },
+                    { name: 'Кеды' },
+                    { name: 'Берцы' },
+                    { name: 'Большие размеры 45 - 49 размер' },
+                    { name: 'Подростковая 35 - 41 размер' },
+               ],
+             },
+           ],
+         };
+}
 }
 </script>
 

@@ -38,9 +38,6 @@ export default {
                 }))
             );
 
-            
-
-
             console.log(created);
 
             res.send({ items: created });
@@ -139,5 +136,22 @@ export default {
             res.status(500).json({ error: 'Не удалось получить товар.' });
         }
     },
+    async getFiltered(req, res) {
+        try {
+            const { season, type } = req.query;
+
+            const products = await Product.findAll({
+                    where: {
+                        season,
+                        type,
+                    },
+            });
+            res.json({ products });
+            
+        } catch (error) {
+            console.error('Ошибка при получении товара:', error);
+            res.status(500).json({ error: 'Не удалось получить товар.' });
+        }
+    }
 
 };
