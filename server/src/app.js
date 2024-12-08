@@ -12,12 +12,12 @@ const app = express()
 app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
-
+app.use(express.json());
 setupRoutes(app);
 
 
 // Синхронизируем базу данных и устанавливаем флаг force: true, чтобы сбросить таблицы (Осторожно, это приведёт к удалению данных)
-db.sequelize.sync({ force:false })
+db.sequelize.sync({ force: false })
     .then(() => {
         app.listen(config.port, () => {
             console.log(`Server started on port ${config.port}`);

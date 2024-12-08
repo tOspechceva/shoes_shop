@@ -61,7 +61,7 @@ import Footer from '../components/Footer.vue';
 import Filter from '../components/Filter.vue';
 import Sidebar from '../components/Sidebar.vue'
 
-import AuthenticationService from '@/services/AuthenticationService';
+import CatalogService from '@/services/CatalogService';
 
 export default {
     name: 'Catalog',//this is the name of the component
@@ -83,7 +83,7 @@ export default {
     methods: {
     async fetchProducts(page = 1) {
         try {
-            const response = await AuthenticationService.paginated({
+            const response = await CatalogService.paginated({
                 params: {
                     page: page,
                     limit: this.itemsPerPage,
@@ -102,11 +102,11 @@ export default {
             this.fetchProducts(page);
         }
         },
-   
-},
-created() {
+   created() {
     this.fetchProducts(); // Загрузка первой страницы при монтировании компонента
 },
+},
+
 }
 </script>
 <style scoped>

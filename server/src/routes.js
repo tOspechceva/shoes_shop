@@ -10,6 +10,7 @@ import MaterialController from "./controllers/MaterialController.js"
 import SizeController from "./controllers/SizeController.js"
 import TypeController from "./controllers/TypeController.js"
 import productController from "./controllers/productController.js"
+import ProductTypeController from "./controllers/manyToMany/ProductTypeController.js"
 
 export const setupRoutes = (app) => {
     //=======================User=======================
@@ -26,11 +27,50 @@ export const setupRoutes = (app) => {
     app.post('/addSeason',
         SeasonController.add);
     
+    // Добавить массив сезона
+    app.post('/addArraySeason',
+        SeasonController.addArray);
+
+    // Получить список сезонов
+    app.get('/getSeason',
+        SeasonController.get);
+
+    // Получение сезона по id
+    app.get('/season/:id',
+        SeasonController.getById);
+
+    // Удаление сезона
+    app.delete('/deleteSeason/:id',
+        SeasonController.delete);
+
+    //Обновление сезона
+    app.put('/putSeason/:id',
+        SeasonController.update);
+    
     //=====================Insulation===================
     // Добавить утеплитьель
     app.post('/addInsulation',
         InsulationController.add);
     
+    // Добавить массив утеплитьеля
+    app.post('/addArrayInsulation',
+        InsulationController.addArray);
+
+    // Получить список утеплитьеля
+    app.get('/getInsulation',
+        InsulationController.get);
+
+    // Получение утеплитьеля по id
+    app.get('/insulation/:id',
+        InsulationController.getById);
+
+    // Удаление утеплитьеля
+    app.delete('/deleteInsulation/:id',
+        InsulationController.delete);
+
+    //Обновление утеплитьеля
+    app.put('/putInsulation/:id',
+        InsulationController.update);
     //======================Claps=======================
     // Добавить застежку
     app.post('/addClaps',
@@ -86,16 +126,75 @@ export const setupRoutes = (app) => {
     app.post('/addManufacturer',
         ManufacturerController.add);
     
+    // Добавить массив производителей
+    app.post('/addArrayManufacture',
+        ManufacturerController.addArray);
+
+    // Получить список производителей
+    app.get('/getManufacture',
+        ManufacturerController.get);
+
+    // Получение производителя по id
+    app.get('/manufacture/:id',
+        ManufacturerController.getById);
+
+    // Удаление производителя
+    app.delete('/deleteManufacture/:id',
+        ManufacturerController.delete);
+
+    //Обновление производителя
+    app.put('/putManufacture../:id',
+        ManufacturerController.update);
+    
     //=====================Material=====================
     // Добавить материал
     app.post('/addMaterial',
         MaterialController.add);
+    
+    // Добавить массив материалов
+    app.post('/addArrayMaterial',
+        MaterialController.addArray);
+
+    // Получить список материалов
+    app.get('/getMaterial',
+        MaterialController.get);
+
+    // Получение материала по id
+    app.get('/material/:id',
+        MaterialController.getById);
+
+    // Удаление материала
+    app.delete('/deleteMaterial/:id',
+        MaterialController.delete);
+
+    //Обновление материала
+    app.put('/putMaterial/:id',
+        MaterialController.update);
     
     //======================Size========================
     // Добавить размер
     app.post('/addSize',
         SizeController.add);
     
+    // Добавить массив размеров
+    app.post('/addArraySize',
+        SizeController.addArray);
+
+    // Получить список размеров
+    app.get('/getSize',
+        SizeController.get);
+
+    // Получение размера по id
+    app.get('/size/:id',
+        SizeController.getById);
+
+    // Удаление размера
+    app.delete('/deleteSize/:id',
+        SizeController.delete);
+
+    //Обновление размера
+    app.put('/putSize/:id',
+        SizeController.update);
     //======================Type========================
     // Добавить тип
     app.post('/addType',
@@ -125,6 +224,10 @@ export const setupRoutes = (app) => {
     app.post('/addProduct',
         productController.add);
 
+    // Добавить массив 
+    app.post('/addArrayProduct',
+        productController.addArray);
+    
     // Получить список продуктов
     app.get('/getProduct',
         productController.get);
@@ -145,6 +248,12 @@ export const setupRoutes = (app) => {
     app.get('/products/:id',
         productController.getById);
     //======================================================
+    app.post('/products/set-types',
+        ProductTypeController.setTypesForProduct
+    );
+    app.get('/products/types/:id',
+        ProductTypeController.getTypesForProduct
+    );
 }
 
 

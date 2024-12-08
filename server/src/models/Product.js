@@ -27,7 +27,8 @@ export default (sequelize, DataTypes) => {
         },
         id_season: {
             type: DataTypes.INTEGER,
-            allowNull: false, // Обязательно указываем сезон
+            allowNull: true, // Поле может быть пустым, если родитель удалён
+            defaultValue: null, // Значение по умолчанию при удалении родителя
             references: {
                 model: 'Seasons', // Связь с таблицей Seasons
                 key: 'id',
@@ -35,7 +36,8 @@ export default (sequelize, DataTypes) => {
         },
         id_material: {
             type: DataTypes.INTEGER,
-            allowNull: false, // Обязательно указываем материал
+            allowNull: true, // Поле может быть пустым, если родитель удалён
+            defaultValue: null, // Значение по умолчанию при удалении родителя
             references: {
                 model: 'Materials', // Связь с таблицей Materials
                 key: 'id',
@@ -43,7 +45,8 @@ export default (sequelize, DataTypes) => {
         },
         id_insulation: {
             type: DataTypes.INTEGER,
-            allowNull: true, // Утеплитель может отсутствовать
+            allowNull: true, // Поле может быть пустым, если родитель удалён
+            defaultValue: null, // Значение по умолчанию при удалении родителя
             references: {
                 model: 'Insulations', // Связь с таблицей Insulations
                 key: 'id',
@@ -51,7 +54,8 @@ export default (sequelize, DataTypes) => {
         },
         id_manufacturer: {
             type: DataTypes.INTEGER,
-            allowNull: false, // Производитель обязателен
+            allowNull: true, // Поле может быть пустым, если родитель удалён
+            defaultValue: null, // Значение по умолчанию при удалении родителя
             references: {
                 model: 'Manufacturers', // Связь с таблицей Manufacturers
                 key: 'id',
@@ -71,6 +75,10 @@ export default (sequelize, DataTypes) => {
         Product.belongsTo(models.Material, { foreignKey: 'id_material' });
         Product.belongsTo(models.Insulation, { foreignKey: 'id_insulation' });
         Product.belongsTo(models.Manufacturer, { foreignKey: 'id_manufacturer' });
+        Product.belongsToMany(models.Colore, { through: models.ProductColore });
+        Product.belongsToMany(models.Type, { through: models.ProductType });
+        Product.belongsToMany(models.Size, { through: models.ProductSize });
+        Product.belongsToMany(models.Claps, { through: models.ProductClaps });
     };
 
     return Product;

@@ -1,9 +1,3 @@
-// controllers/productController.js
-//import Product from '../models/Product.js';
-//import Season from '../models/Season.js';
-//import Material from '../models/Material.js';
-//import Insulation from '../models/Insulation.js';
-//import Manufacturer from '../models/Manufacturer.js';
 import bd from '../models/index.js';
 
 const { Product, Season, Material, Insulation, Manufacturer } = bd;
@@ -17,6 +11,42 @@ export default {
             });
         } catch  {
                 res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
+        }
+    },
+
+    async addArray(req, res) {
+        try {
+            const { items } = req.body;
+
+            if (!Array.isArray(items)) {
+                return res.status(400).send({ error: 'Поле "items" должно быть массивом.' });
+            }
+
+            console.log('Принятые данные:', items);
+
+            const created = await Promise.all(
+                items.map(item => Product.create({
+                    name: item.name,
+                    price: item.price,
+                    description: item.description,
+                    rating: item.rating,
+                    id_season: item.id_season,
+                    id_material: item.id_material,
+                    id_insulation: item.id_insulation,
+                    id_manufacturer: item.id_manufacturer,
+                    img: item.img
+                }))
+            );
+
+            
+
+
+            console.log(created);
+
+            res.send({ items: created });
+        } catch (error) {
+            console.error('Ошибка при обработке массива:', error);
+            res.status(500).send({ error: 'Произошла ошибка на сервере.' });
         }
     },
 

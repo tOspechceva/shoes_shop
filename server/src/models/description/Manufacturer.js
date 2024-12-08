@@ -6,7 +6,7 @@ export default (sequelize, DataTypes) => {
         },
         country: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         
     }, {

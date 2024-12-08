@@ -1,9 +1,3 @@
-// controllers/productController.js
-//import Product from '../models/Product.js';
-//import Season from '../models/Season.js';
-//import Material from '../models/Material.js';
-//import Insulation from '../models/Insulation.js';
-//import Manufacturer from '../models/Manufacturer.js';
 import bd from '../models/index.js';
 
 const { Type } = bd;
@@ -21,11 +15,12 @@ export default {
     },
     async addArray(req, res) {
         try {
+            console.log("Зашел в функцию ");
             const { types } = req.body; // Предполагается, что в запросе передан массив элементов
             if (!Array.isArray(types)) {
                 return res.status(400).send({ error: 'Должен быть передан массив типов.' });
             }
-
+            console.log("Получил данные", types);
             // Создаем записи в базе данных для каждого элемента
             const createdType = await Promise.all(types.map(type => Type.create({ name: type })));
 
