@@ -4,6 +4,7 @@ const { Product, Type } = db;
 
 export default {
     // Установка типов для продукта
+    
     async setTypesForProduct(req, res) {
         try {
             const { productId, typeIds } = req.body;

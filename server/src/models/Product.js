@@ -76,7 +76,12 @@ export default (sequelize, DataTypes) => {
         Product.belongsTo(models.Insulation, { foreignKey: 'id_insulation' });
         Product.belongsTo(models.Manufacturer, { foreignKey: 'id_manufacturer' });
         Product.belongsToMany(models.Colore, { through: models.ProductColore });
-        Product.belongsToMany(models.Type, { through: models.ProductType });
+       
+        Product.belongsToMany(models.Type, {
+            through: 'ProductTypes',
+            foreignKey: 'ProductId',
+            otherKey: 'TypeId',
+        });
         Product.belongsToMany(models.Size, { through: models.ProductSize });
         Product.belongsToMany(models.Claps, { through: models.ProductClaps });
     };

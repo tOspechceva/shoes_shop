@@ -55,6 +55,7 @@ export default {
 
 <style scoped>
 
+
 h2 {
     background-color:  #233870; /* Заливка фона */
     color: #ffffff;

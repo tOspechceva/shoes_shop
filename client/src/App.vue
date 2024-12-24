@@ -12,7 +12,7 @@ export default {
 
 <style>
     body {
-      background-image: url('.\\img\\pexels-rahulp9800-3286578.jpg'); /* Путь к изображению, которое будет   использоваться как фон */
+      background-image: url('./img/pexels-rahulp9800-3286578.jpg');/* Путь к изображению, которое будет   использоваться как фон */
       background-size: cover;                                         /* Изображение фона будет   масштабироваться, чтобы покрыть весь экран */
       background-repeat: no-repeat;                                   /* Отключаем повтор фона, изображение   будет показано один раз */
       background-position: center center;                             /* Центрируем фон по горизонтали и  вертикали */

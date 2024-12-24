@@ -8,6 +8,9 @@ export default {
         return Api().get(`/products/${id}`);
     },
     filtered(params){
-        return Api().get('/filtered', params)
+        return Api().get('/filtered', params);
     },
+    getSeasonsWithTypes() {
+        return Api().get('/seasons-with-types');
+    }
 }

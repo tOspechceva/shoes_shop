@@ -2,6 +2,8 @@ import axios from 'axios'
 
 export default () => {
     return axios.create({
-        baseURL: `http://localhost:8081/`
+        baseURL: `http://localhost:8081/`  // Имя контейнера из docker-compose
     })
 }
+
+//http://host.docker.internal:8081

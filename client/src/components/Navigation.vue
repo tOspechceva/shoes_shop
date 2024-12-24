@@ -82,7 +82,7 @@
     </div>
 </template>
 
-<script>
+<script scoped>
 export default {
     name: 'Navigation',
     data() {
@@ -105,11 +105,7 @@ export default {
 }
 </script>
 
-<style >
-
-
-
-
+<style scoped>
 
 
 h1 {

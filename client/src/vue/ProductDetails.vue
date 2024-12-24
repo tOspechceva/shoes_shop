@@ -17,14 +17,14 @@
   </div>
   </div>
   </div>
-    <Footer></Footer>
+ 
 </template>
 
 <script>
 import Navigation from '../components/Navigation.vue'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue';
-import AuthenticationService from '@/services/AuthenticationService';
+import CatalogService from '@/services/CatalogService';
 
 export default {
     name: 'ProductDetails',
@@ -46,7 +46,7 @@ export default {
   },
   async created() {
     try {
-      const response = await AuthenticationService.getProductById(this.id);
+      const response = await CatalogService.getProductById(this.id);
         this.product = response.data;
         console.log(response.data);
     } catch (error) {

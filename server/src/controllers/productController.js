@@ -1,11 +1,28 @@
 import bd from '../models/index.js';
 
-const { Product, Season, Material, Insulation, Manufacturer } = bd;
+const { Product, Season, Material, Insulation, Manufacturer, Type} = bd;
 
 export default {
     async add(req, res) {
         try {
-            const product = await Product.create(req.body);
+            const  item  = req.body;
+            const product = await Product.create({
+                name: item.name,
+                price: item.price,
+                description: item.description,
+                rating: item.rating,
+                id_season: item.id_season,
+                id_material: item.id_material,
+                id_insulation: item.id_insulation,
+                id_manufacturer: item.id_manufacturer,
+                img: item.img
+            });
+            if (!Array.isArray(item.typeIds)) {
+                return res.status(400).send({ error: 'Поле "typeIds" должно быть массивом.' });
+            }
+
+            await product.setTypes(item.typeIds); // Связывает продукт с типами
+
             res.send({
                 product: product
             });
@@ -25,20 +42,28 @@ export default {
             console.log('Принятые данные:', items);
 
             const created = await Promise.all(
-                items.map(item => Product.create({
-                    name: item.name,
-                    price: item.price,
-                    description: item.description,
-                    rating: item.rating,
-                    id_season: item.id_season,
-                    id_material: item.id_material,
-                    id_insulation: item.id_insulation,
-                    id_manufacturer: item.id_manufacturer,
-                    img: item.img
-                }))
-            );
+                items.map(async (item) => {
+                    const product = await Product.create({
+                        name: item.name,
+                        price: item.price,
+                        description: item.description,
+                        rating: item.rating,
+                        id_season: item.id_season,
+                        id_material: item.id_material,
+                        id_insulation: item.id_insulation,
+                        id_manufacturer: item.id_manufacturer,
+                        img: item.img
+                    });
 
-            console.log(created);
+                    if (Array.isArray(item.typeIds)) {
+                        await product.setTypes(item.typeIds); // Связывает продукт с типами
+                    } else {
+                        throw new Error('Поле "typeIds" должно быть массивом.');
+                    }
+
+                    return product;
+                })
+            );
 
             res.send({ items: created });
         } catch (error) {
@@ -46,7 +71,6 @@ export default {
             res.status(500).send({ error: 'Произошла ошибка на сервере.' });
         }
     },
-
     // 2. Получение списка всех продуктов
     async get(req, res) {
         try {
@@ -89,23 +113,47 @@ export default {
             res.status(400).json({ error: error.message });
         }
     },
-    async getPaginated(req, res){
+    async getPaginated(req, res) {
         try {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
-
             const offset = (page - 1) * limit;
 
+            const { seasonId, typeId } = req.query; // Получаем параметры seasonId и typeId
+
+            // Строим условия для поиска
+            let whereConditions = {};
+            let includeConditions = [];
+
+            // Если передан seasonId, добавляем условие фильтрации по сезону
+            if (seasonId) {
+                whereConditions.id_season = seasonId;
+            }
+
+            // Если передан typeId, добавляем условие фильтрации по типу через промежуточную таблицу
+            if (typeId) {
+                includeConditions.push({
+                    model: Type,
+                    where: { id: typeId }, // Фильтруем по typeId
+                    through: {
+                        attributes: [], // Не возвращаем атрибуты из таблицы связи
+                    },
+                });
+            }
+
+            // Выполняем запрос с возможными условиями фильтрации
             const { rows: products, count } = await Product.findAndCountAll({
-                limit: parseInt(limit),
-                offset: parseInt(offset),
+                where: whereConditions,     // Фильтрация по seasonId
+                limit: limit,
+                offset: offset,
+                include: includeConditions, // Включаем типы, если передан typeId
             });
 
             res.status(200).json({
                 products,
                 total: count,
                 totalPages: Math.ceil(count / limit),
-                currentPage: parseInt(page),
+                currentPage: page,
             });
         } catch (error) {
             res.status(400).json({ error: error.message });

@@ -27,6 +27,7 @@
 import Navigation from '../components/Navigation.vue'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue';
+
 export default {
     name: 'Contact',
     components: {
@@ -54,7 +55,7 @@ footer {
         padding: 10px 0;
     }
 .header {
-    color: #fcfcfc;
+    color: #000000;
     font-size: 2rem;
     font-family: 'Segoe Script', cursive;
     margin-bottom: 0px;

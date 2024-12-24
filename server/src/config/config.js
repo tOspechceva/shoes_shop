@@ -1,13 +1,13 @@
 const config = {
-    port: process.env. PORT || 8081,
+    port: process.env.PORT || 8081,
     db: {
-        database: 'shop',
-        user: 'postgres',
-        password: 'LenaTom03',
+        database: process.env.DB_NAME || 'shop',
+        user: process.env.DB_USER || 'postgres',
+        password: process.env.DB_PASSWORD || 'LenaTom03',
         options: {
-            host: 'localhost',
+            host: process.env.DB_HOST || 'localhost', // Используется 'postgres' из docker-compose
             dialect: 'postgres',
-            logging: console.log, // Включает логирование запросов
+            logging: console.log,
         },
     },
     authentication: {
@@ -15,4 +15,4 @@ const config = {
     }
 }
 
-export default config;  // Экспорт по умолчанию
+export default config;

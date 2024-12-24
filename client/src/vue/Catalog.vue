@@ -1,55 +1,60 @@
 <template>
     <Header></Header>
     <Navigation></Navigation>
-     <div class="catalog-page">
+      
+
+         <div class="catalog-page">
+            
+       <Sidebar 
+      @season-selected="handleSeasonSelect"
+      @type-selected="handleTypeSelect" 
+    />
+        <main>
+        <h2>Каталог Мужской Обуви</h2>
         
-    <Sidebar></Sidebar>
-    <main>
-    <h2>Каталог Мужской Обуви</h2>
-
-    <!-- Кнопка для открытия фильтров -->
-     
-    <Filter></Filter>
-    
-
-    <!-- Список товаров -->
-     <div class="catalog">
-    <div class="product" v-for="product in products" :key="product.id">
-      <img :src="product.img" :alt="product.name" />
-      <router-link :to="`/product/${product.id}`">
-        <h2>{{ product.name }}</h2>
-      </router-link>
-      <p>{{ product.description }}</p>
-      <p class="price">Цена: {{ product.price }} руб.</p>
-      <a href="#" class="buy-btn">Купить</a>
-    </div>
-  </div>
-
-    <!-- Навигация по страницам -->
-    <div class="pagination">
-    <button 
-        :disabled="currentPage === 1" 
-        @click="handlePageChange(currentPage - 1)">
-        Предыдущая
-    </button>
-
-    <span v-for="page in totalPages" :key="page" class="page-number">
+        <!-- Кнопка для открытия фильтров -->
+        
+        <Filter></Filter>
+        
+        
+        <!-- Список товаров -->
+         <div class="catalog">
+        <div class="product" v-for="product in products" :key="product.id">
+          <img :src="product.img" :alt="product.name" />
+          <router-link :to="`/product/${product.id}`">
+            <h2>{{ product.name }}</h2>
+          </router-link>
+          <p>{{ product.description }}</p>
+          <p class="price">Цена: {{ product.price }} руб.</p>
+          <a href="#" class="buy-btn">Купить</a>
+        </div>
+      </div>
+  
+        <!-- Навигация по страницам -->
+        <div class="pagination">
         <button 
-            :class="{ active: page === currentPage }" 
-            @click="handlePageChange(page)">
-            {{ page }}
+            :disabled="currentPage === 1" 
+            @click="handlePageChange(currentPage - 1)">
+            Предыдущая
         </button>
-    </span>
-
-    <button 
-        :disabled="currentPage === totalPages" 
-        @click="handlePageChange(currentPage + 1)">
-        Следующая
-    </button>
-</div>
-
-    </main>
+    
+        <span v-for="page in totalPages" :key="page" class="page-number">
+            <button 
+                :class="{ active: page === currentPage }" 
+                @click="handlePageChange(page)">
+                {{ page }}
+            </button>
+        </span>
+    
+        <button 
+            :disabled="currentPage === totalPages" 
+            @click="handlePageChange(currentPage + 1)">
+            Следующая
+        </button>
     </div>
+    
+        </main>
+        </div>
    
 </template>
 
@@ -61,8 +66,7 @@ import Footer from '../components/Footer.vue';
 import Filter from '../components/Filter.vue';
 import Sidebar from '../components/Sidebar.vue'
 
-import CatalogService from '@/services/CatalogService';
-
+import CatalogService from '@/services/CatalogService.js';
 export default {
     name: 'Catalog',//this is the name of the component
     components: {
@@ -78,34 +82,32 @@ export default {
             currentPage: 1,    // Текущая страница
             totalPages: 1,     // Общее количество страниц
             itemsPerPage: 15,  // Количество товаров на странице
+            selectedSeasonId: null, // id выбранного сезона
+            selectedTypeId: null,   // id выбранного типа
         };
     },
-    methods: {
-    async filterProducts(season, type) {
-        try {
-          const response = await CatalogService.filtered({
-            params: { season, type },
-          });
-          const data = response.data;
-          this.products = data.products;
-          this.currentPage = 1; // Сбрасываем текущую страницу
-          this.totalPages = data.totalPages;
-        } catch (error) {
-          console.error('Ошибка при фильтрации товаров:', error);
-        }
-    },
+     methods: {
     async fetchProducts(page = 1) {
         try {
-            const response = await CatalogService.paginated({
-                params: {
-                    page: page,
-                    limit: this.itemsPerPage,
-                },
-            });
-            const data = response.data; // Axios возвращает данные в `response.data`
-            this.products = data.products;
-            this.currentPage = data.currentPage;
-            this.totalPages = data.totalPages;
+            const params = {
+            page: page,
+            limit: this.itemsPerPage,
+        };
+
+        // Добавляем параметры фильтрации только если они не null
+        if (this.selectedSeasonId !== null) {
+            params.seasonId = this.selectedSeasonId;
+        }
+
+        if (this.selectedTypeId !== null) {
+            params.typeId = this.selectedTypeId;
+        }
+
+        const response = await CatalogService.paginated({ params });
+        const data = response.data; // Axios возвращает данные в `response.data`
+        this.products = data.products;
+        this.currentPage = data.currentPage;
+        this.totalPages = data.totalPages;
         } catch (error) {
             console.error('Ошибка при загрузке товаров:', error);
         }
@@ -114,10 +116,21 @@ export default {
         if (page >= 1 && page <= this.totalPages) {
             this.fetchProducts(page);
         }
-        },
-  
+    },
+    handleSeasonSelect({ seasonId }) {
+      // Обновляем выбранный id сезона
+      this.selectedSeasonId = seasonId;
+      this.fetchProducts(); // Загрузка товаров с новым seasonId
+    },
+    handleTypeSelect({ seasonId, typeId }) {
+      // Обновляем выбранные id сезона и типа
+      this.selectedSeasonId = seasonId;
+      this.selectedTypeId = typeId;
+      this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
+    },
+   
 },
- created() {
+created() {
     this.fetchProducts(); // Загрузка первой страницы при монтировании компонента
 },
 }

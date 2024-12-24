@@ -55,7 +55,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .text-filter{
     color: #fff;
     text-align: center; 

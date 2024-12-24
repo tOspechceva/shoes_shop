@@ -13,7 +13,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 footer {
     background-color: #464343;  /* Цвет фона для футера */
     color: white;               /* Цвет текста в футере */

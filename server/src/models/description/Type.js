@@ -7,6 +7,14 @@ export default (sequelize, DataTypes) => {
     }, {
         timestamps: false,
     });
+    Type.associate = (models) => {
+        
+        Type.belongsToMany(models.Product, {
+            through: 'ProductTypes',
+            foreignKey: 'TypeId',
+            otherKey: 'ProductId',
+        });
+    };
 
     return Type;
 };

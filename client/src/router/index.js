@@ -9,7 +9,7 @@ import Register from '../vue/Register.vue'
 import Basket from '../vue/Basket.vue'
 import Profile from '../vue/Profile.vue'
 import ProductDetails from '../vue/ProductDetails.vue'
-import addProject from '@/vue/admin/addProject.vue'
+import AddProduct from '@/vue/admin/addProject.vue'
 
 const routes = [{
   path: '/',
@@ -44,12 +44,12 @@ const routes = [{
   name: 'ProductDetails',
   component: ProductDetails,
   props: true, // Пропускаем `id` как пропс в компонент
+  }, {
+    path: '/add-product',
+    name: 'AddProduct',
+    component: AddProduct,
   },
-  {
-    path: '/addProject',
-    name: 'addProject',
-    component: addProject,
-  },
+ 
 ]
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

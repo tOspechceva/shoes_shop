@@ -53,7 +53,7 @@ export default {
     methods: {
         async login() {
             try {
-                const response = await AuthenticationService.paginated({
+                const response = await AuthenticationService.login({
                     email: this.email,
                     password: this.password,
                 });
