@@ -17,7 +17,7 @@ setupRoutes(app);
 
 
 // Синхронизируем базу данных и устанавливаем флаг force: true, чтобы сбросить таблицы (Осторожно, это приведёт к удалению данных)
-db.sequelize.sync({ force: false })
+db.sequelize.sync({ force: true })
     .then(() => {
         app.listen(config.port, () => {
             console.log(`Server started on port ${config.port}`);

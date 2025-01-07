@@ -44,5 +44,10 @@ export default (sequelize, DataTypes) => {
         }
     };
 
+    // Связи для Cart
+    User.associate = (models) => {
+        User.hasMany(models.Cart, { foreignKey: 'user_id' }); 
+    };
+
     return User;
 };

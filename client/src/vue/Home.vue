@@ -9,24 +9,28 @@
     <section class="products">
     <div class="product-card">
         <img src="..\\img\\зима.jpg" alt="Ботинки">
-        <h3>Обувь для зимы</h3>
+        <h3 @click="goToCatalog(2)" 
+            style="cursor: pointer">Обувь для зимы</h3>
         <p>Утепленная обувь на меху</p>
     
     </div>
   
     <div class="product-card">
         <img src="..\\img\\классические туфли.webp">
-        <h3>Весенняя - Осенняя</h3>
+        <h3 @click="goToCatalog(3)" 
+            style="cursor: pointer">Весенняя - Осенняя</h3>
        
     </div>
     <div class="product-card">
         <img src="..\\img\\лето.jpg" alt="Летняя обувь">
-        <h3>Летняя обувь</h3>
+        <h3 @click="goToCatalog(1)" 
+            style="cursor: pointer">Летняя обувь</h3>
         
     </div>
     <div class="product-card">
         <img src="..\\img\\демисезонные.webp" alt="Ботинки">
-        <h3>Демисезонная</h3>
+        <h3 @click="goToCatalog(4)" 
+            style="cursor: pointer">Демисезонная</h3>
         <p >Обувь с небольшим утеплением внутри </p>
         <p>(байка, текстиль)</p>
     </div>
@@ -49,6 +53,12 @@ export default {
     Navigation,
     Header,
     Footer,
+    },
+  methods: {
+    goToCatalog(seasonId) {
+      // Переход на страницу каталога с выбранным seasonId
+      this.$router.push({ name: 'catalogWithSeason', params: { seasonId } });
+    }
   }
 };
 </script>

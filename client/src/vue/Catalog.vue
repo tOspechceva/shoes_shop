@@ -1,7 +1,9 @@
 <template>
     <Header></Header>
-    <Navigation></Navigation>
-      
+    <Navigation 
+      @season-selected="handleSeasonSelect"
+      @type-selected="handleTypeSelect" 
+    />
 
          <div class="catalog-page">
             
@@ -68,7 +70,8 @@ import Sidebar from '../components/Sidebar.vue'
 
 import CatalogService from '@/services/CatalogService.js';
 export default {
-    name: 'Catalog',//this is the name of the component
+    name: 'Catalog',
+    props: ['seasonId','typeId'], // Получаем seasonId как пропс
     components: {
         Navigation,
         Header,
@@ -82,7 +85,7 @@ export default {
             currentPage: 1,    // Текущая страница
             totalPages: 1,     // Общее количество страниц
             itemsPerPage: 15,  // Количество товаров на странице
-            selectedSeasonId: null, // id выбранного сезона
+            selectedSeasonId: null , // id выбранного сезона
             selectedTypeId: null,   // id выбранного типа
         };
     },
@@ -95,10 +98,15 @@ export default {
         };
 
         // Добавляем параметры фильтрации только если они не null
-        if (this.selectedSeasonId !== null) {
+        if (this.seasonId !== null ) {
+            params.seasonId = this.seasonId;
+            if (this.typeId !== null) {
+                params.typeId = this.typeId;
+            }
+        }
+        if (this.selectedSeasonId !== null ) {
             params.seasonId = this.selectedSeasonId;
         }
-
         if (this.selectedTypeId !== null) {
             params.typeId = this.selectedTypeId;
         }
@@ -107,7 +115,9 @@ export default {
         const data = response.data; // Axios возвращает данные в `response.data`
         this.products = data.products;
         this.currentPage = data.currentPage;
-        this.totalPages = data.totalPages;
+            this.totalPages = data.totalPages;
+    
+        
         } catch (error) {
             console.error('Ошибка при загрузке товаров:', error);
         }
@@ -117,9 +127,10 @@ export default {
             this.fetchProducts(page);
         }
     },
-    handleSeasonSelect({ seasonId }) {
+    handleSeasonSelect({seasonId}) {
       // Обновляем выбранный id сезона
       this.selectedSeasonId = seasonId;
+      this.selectedTypeId = null;
       this.fetchProducts(); // Загрузка товаров с новым seasonId
     },
     handleTypeSelect({ seasonId, typeId }) {

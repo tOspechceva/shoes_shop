@@ -61,6 +61,25 @@ export default {
                         throw new Error('Поле "typeIds" должно быть массивом.');
                     }
 
+                    if (Array.isArray(item.clapsIds)) {
+                        await product.setClaps(item.clapsIds); // Связывает продукт с типами
+                    } else {
+                        throw new Error('Поле "clapsIds" должно быть массивом.');
+                    }
+
+                    if (Array.isArray(item.sizeIds)) {
+                        await product.setSizes(item.sizeIds); // Связывает продукт с типами
+                    } else {
+                        throw new Error('Поле "sizeIds" должно быть массивом.');
+                    }
+
+                    if (Array.isArray(item.coloreIds)) {
+                        await product.setColores(item.coloreIds); // Связывает продукт с типами
+                    } else {
+                        throw new Error('Поле "coloreIds" должно быть массивом.');
+                    }
+
+
                     return product;
                 })
             );

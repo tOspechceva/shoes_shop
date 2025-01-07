@@ -9,7 +9,11 @@ export default (sequelize, DataTypes) => {
     });
 
     Size.associate = (models) => {
-        Size.belongsToMany(models.Product, { through: 'ProductSize' });
+        Size.belongsToMany(models.Product, {
+            through: 'ProductSize',
+            foreignKey: 'SizeId',
+            otherKey: 'ProductId',
+        });
     };
 
     return Size;

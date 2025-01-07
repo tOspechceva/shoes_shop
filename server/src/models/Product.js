@@ -82,9 +82,15 @@ export default (sequelize, DataTypes) => {
             foreignKey: 'ProductId',
             otherKey: 'TypeId',
         });
-        Product.belongsToMany(models.Size, { through: models.ProductSize });
+        Product.belongsToMany(models.Size, {
+            through: 'ProductSize',
+            foreignKey: 'ProductId',
+            otherKey: 'SizeId',
+        });
         Product.belongsToMany(models.Claps, { through: models.ProductClaps });
     };
+
+  
 
     return Product;
 };

@@ -17,6 +17,11 @@ import ProductColore from './manyToMany/ProductColore.js';
 import ProductClaps from './manyToMany/ProductClaps.js';
 import ProductSize from './manyToMany/ProductSize.js';
 import ProductType from './manyToMany/ProductType.js';
+
+import Order from './basket/Orders.js';
+import Cart from './basket/Cart.js'
+import  CartItem  from './basket/CartItem.js';
+
 // Инициализация подключения к базе данных
 const sequelize = new Sequelize(
     config.db.database,
@@ -48,9 +53,13 @@ const db = {
 
     ProductColore: ProductColore(sequelize),
     ProductClaps: ProductClaps(sequelize),
-    ProductSize: ProductSize(sequelize),
+    ProductSize: ProductSize(sequelize, Sequelize.DataTypes),
     ProductType: ProductType(sequelize),
-    
+
+    Order: Order(sequelize, Sequelize.DataTypes),
+    Cart: Cart(sequelize, Sequelize.DataTypes),
+    CartItem: CartItem(sequelize, Sequelize.DataTypes)
+
 };
 
 

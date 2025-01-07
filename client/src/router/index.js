@@ -19,7 +19,20 @@ const routes = [{
   path: '/contact', // Динамический маршрут "/contact"
   name: 'contact',
   component: Contact, // Компонент страницы контактов
-}, {
+  },
+  {
+    path: '/catalog/:seasonId',  // Параметр seasonId в URL
+    name: 'catalogWithSeason',
+    component: Catalog,
+    props: true,  // Параметры маршрута передаются как пропсы
+  },
+  {
+    path: '/catalog/:seasonId/:typeId',  // Два параметра в URL
+    name: 'catalogWithSeasonType',
+    component: Catalog,
+    props: true,  // Параметры маршрута передаются как пропсы
+  },
+  {
   path: '/catalog',
   name: 'catalog',
   component: Catalog,

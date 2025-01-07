@@ -5,71 +5,29 @@
         <li><router-link :to="{ name: 'home' }"> Главная </router-link></li>
             <li class="catalog-menu">
                 <router-link :to="{ name: 'catalog' }"> Каталог </router-link>
-                <ul class="season-dropdown">
-                    <li class="season-item">
-                        <a href="#">Зима</a>
-                        <ul class="type-dropdown">
-                            <li><a href="#">Сапоги</a></li>
-                            <li><a href="#">Ботинки</a></li>
-                            <li><a href="#">Классическая обувь</a></li>
-                            <li><a href="#">Уги</a></li>
-                            <li><a href="#">Берцы</a></li>
-                            <li><a href="#">Дутики</a></li>
-                            <li><a href="#">Спорт</a></li>
-                            <li><a href="#">Кеды</a></li>
-                            <li><a href="#">Комфорт обувь</a></li>
-                            <li><a href="#">Резиновая обувь</a></li>
-                            <li><a href="#">Туфли</a></li>
-                            <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                            <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                        </ul>
-                    </li>
-                    <li class="season-item">
-                        <a href="#">Демисезон</a>
-                        <ul class="type-dropdown">
-                            <li><a href="#">Классическая обувь</a></li>
-                            <li><a href="#">Спорт</a></li>
-                            <li><a href="#">Кеды</a></li>
-                            <li><a href="#">Берцы</a></li>
-                            <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                            <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                            
-                        </ul>
-                    </li>
-                    <li class="season-item">
-                        <a href="#">Весна - Осень</a>
-                        <ul class="type-dropdown">
-                            <li><a href="#">Классические туфли</a></li>
-                            <li><a href="#">Спортивная</a></li>
-                            <li><a href="#">Лоферы</a></li>
-                            <li><a href="#">Макасины</a></li>
-                            <li><a href="#">Комфорт обувь</a></li>
-                            <li><a href="#">Кеды</a></li>
-                            <li><a href="#">Резиновая обувь</a></li>
-                            <li><a href="#">Берцы</a></li>
-                            <li><a href="#">Казаки</a></li>
-                            <li><a href="#">Броги</a></li>
-                            <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                            <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                        </ul>
-                    </li>
-                    <li class="season-item">
-                        <a href="#">Лето</a>
-                        <ul class="type-dropdown">
-                            <li><a href="#">Классические туфли</a></li>
-                            <li><a href="#">Комфорт обувь</a></li>
-                            <li><a href="#">Сандали</a></li>
-                            <li><a href="#">Шлепанцы</a></li>
-                            <li><a href="#">Кеды</a></li>
-                            <li><a href="#">Спорт</a></li>
-                            <li><a href="#">Резиновая обувь</a></li>
-                            <li><a href="#">Сабо</a></li>
-                            <li><a href="#">Лоферы</a></li>
-                            <li><a href="#">Большие размеры 45 - 49 размер</a></li>
-                            <li><a href="#">Подростковая 35 - 41 размер</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <ul class="season-dropdown">
+                  <li 
+                    class="season-item" 
+                    v-for="(season) in seasons" 
+                    :key="season.season_id"
+                    @click="selectSeason(season.season_id)" 
+                  >
+                    <a>{{ season.season_name }}</a>
+
+                    <!-- Перебираем типы, связанные с сезоном,показываем только для выбранного сезона -->
+                    <ul v-if="selectedSeason === season.season_id" class="type-dropdown">
+                      <li  
+                        v-for="type in season.types" 
+                        :key="type.type_id"
+                        @click="selectType(season.season_id, type.type_id)"
+                        style="cursor: pointer"
+                      >
+                        <a>{{ type.type_name }}</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>    
+                    
             </li>
             <li> <router-link :to="{ name:'contact'}">Контакты</router-link></li>
             <li> <router-link :to="{ name: 'basket' }"> Корзина </router-link></li>
@@ -83,26 +41,49 @@
 </template>
 
 <script scoped>
+import CatalogService from '@/services/CatalogService.js';
 export default {
     name: 'Navigation',
     data() {
-        return {
-            query: '',
-            seasons: [
-                { name: 'Зима', types: ['Сапоги', 'Ботинки', 'Классическая обувь', 'Уги'] },
-                { name: 'Демисезон', types: ['Классическая обувь', 'Спорт', 'Кеды'] },
-                { name: 'Весна - Осень', types: ['Классические туфли', 'Спортивная обувь', 'Лоферы'] },
-                { name: 'Лето', types: ['Сандали', 'Шлепанцы', 'Кеды', 'Лоферы'] },
-            ]
-        }
-    },
+    return {
+      selectedSeason: null, // Инициализация выбранного сезона
+      selectedType: null,
+      seasons: null
+    };
+  },
     methods: {
-        search() {
-            // Здесь будет логика поиска по каталогу
-            console.log(`Searching for: ${this.query}`);
+    selectSeason(seasonId) {
+        // Переход на страницу каталога с выбранным seasonId
+        this.$router.push({ name: 'catalogWithSeason', params: {  seasonId } });
+        // Выбираем сезон, передаем его id на страницу каталога
+        this.selectedSeason = this.selectedSeason === seasonId ? null: seasonId;
+        // Отправляем событие с выбранным сезоном
+        this.$emit('season-selected', { seasonId });
+        
+    },
+    selectType(seasonId, typeId) {
+        this.$router.push({ name: 'catalogWithSeasonType', params: {  seasonId, typeId } });
+        this.selectedSeason = this.selectedSeason === seasonId ? null :   seasonId;
+        this.selectedType = this.selectedType === typeId ? null : typeId;
+        // Передаем id сезона и id типа на страницу каталога
+        this.$emit('type-selected', { seasonId, typeId });
+    },
+    async getSeason() {
+        try {
+          const response = await CatalogService.getSeasonsWithTypes();
+          const data = response.data;
+            console.log(data);
+            this.seasons = data.seasons;
+          console.log('Сезоны:', this.seasons);
+        } catch (error) {
+          console.error('Ошибка при загрузке товаров:', error);
         }
     }
-}
+  },
+  created() {
+     this.getSeason();  // Загружаем сезоны при создании компонента
+  },
+};
 </script>
 
 <style scoped>
@@ -123,6 +104,7 @@ nav {
     background-color: #233870;    /* Цвет фона навигационного меню */
     padding: 10px;                  /* Внутренние отступы блока навигации */
     text-align: center;             /* Центрирование текста в элементах навигации */
+    margin-bottom: 10px;
 }
 
 nav a:hover {

@@ -42,16 +42,19 @@ export default {
   },
   methods: {
     selectSeason(seasonId) {
-      // Выбираем сезон, передаем его id на страницу каталога
-      this.selectedSeason = this.selectedSeason === seasonId ? null : seasonId;
-      // Отправляем событие с выбранным сезоном
-      this.$emit('season-selected', { seasonId });
+      // Переход на страницу каталога с выбранным seasonId
+        this.$router.push({ name: 'catalogWithSeason', params: {  seasonId } });
+        // Выбираем сезон, передаем его id на страницу каталога
+        this.selectedSeason = this.selectedSeason === seasonId ? null: seasonId;
+        // Отправляем событие с выбранным сезоном
+        this.$emit('season-selected', { seasonId });
     },
     selectType(seasonId, typeId) {
-      this.selectedSeason = this.selectedSeason === seasonId ? null : seasonId;
-      this.selectedType = this.selectedType === typeId ? null : typeId;
-      // Передаем id сезона и id типа на страницу каталога
-      this.$emit('type-selected', { seasonId, typeId });
+      this.$router.push({ name: 'catalogWithSeasonType', params: {  seasonId, typeId } });
+        this.selectedSeason = this.selectedSeason === seasonId ? null :   seasonId;
+        this.selectedType = this.selectedType === typeId ? null : typeId;
+        // Передаем id сезона и id типа на страницу каталога
+        this.$emit('type-selected', { seasonId, typeId });
     },
     async getSeason() {
         try {
