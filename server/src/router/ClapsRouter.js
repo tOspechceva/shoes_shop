@@ -1,4 +1,4 @@
-import ClapsController from "../controllers/ClapsController.js"
+import ClapsController from "../controllers/description/ClapsController.js"
 
 export const ClapsRoutes = (app) => {
     // Добавить застежку

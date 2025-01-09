@@ -1,4 +1,4 @@
-import SeasonController from '../controllers/SeasonController.js'
+import SeasonController from '../controllers/description/SeasonController.js'
 
 export const SeasonRoutes = (app) => {
     // Добавить сезон

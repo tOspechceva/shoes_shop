@@ -1,4 +1,4 @@
-import ColoreController from "../controllers/ColoreController.js";
+import ColoreController from "../controllers/description/ColoreController.js";
 
 export const ColoreRoutes = (app) => {
     // Добавить цвет

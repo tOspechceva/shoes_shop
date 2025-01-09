@@ -1,6 +1,6 @@
 import bd from '../models/index.js';
 
-const { Product, Season, Material, Insulation, Manufacturer, Type} = bd;
+const { Product, Season, Material, Insulation, Manufacturer, Type, Size} = bd;
 
 export default {
     async add(req, res) {
@@ -62,19 +62,19 @@ export default {
                     }
 
                     if (Array.isArray(item.clapsIds)) {
-                        await product.setClaps(item.clapsIds); // Связывает продукт с типами
+                        await product.setClaps(item.clapsIds); // Связывает продукт с застежкой
                     } else {
                         throw new Error('Поле "clapsIds" должно быть массивом.');
                     }
 
                     if (Array.isArray(item.sizeIds)) {
-                        await product.setSizes(item.sizeIds); // Связывает продукт с типами
+                        await product.setSizes(item.sizeIds); // Связывает продукт с размером
                     } else {
                         throw new Error('Поле "sizeIds" должно быть массивом.');
                     }
 
                     if (Array.isArray(item.coloreIds)) {
-                        await product.setColores(item.coloreIds); // Связывает продукт с типами
+                        await product.setColores(item.coloreIds); // Связывает продукт с цветом
                     } else {
                         throw new Error('Поле "coloreIds" должно быть массивом.');
                     }
@@ -160,16 +160,40 @@ export default {
                 });
             }
 
+            // Добавляем размеры в include
+            includeConditions.push({
+                model: Size,
+                through: {
+                    attributes: ['count'], // Включаем количество доступных размеров
+                },
+            });
+
             // Выполняем запрос с возможными условиями фильтрации
             const { rows: products, count } = await Product.findAndCountAll({
                 where: whereConditions,     // Фильтрация по seasonId
                 limit: limit,
                 offset: offset,
+                distinct: true, // Учитываем только уникальные записи Product
                 include: includeConditions, // Включаем типы, если передан typeId
             });
+            
+            // Форматируем данные для ответа
+            const formattedProducts = products.map(product => ({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                description: product.description,
+                rating: product.rating,
+                img: product.img,
+                sizes: product.Sizes.map(size => ({
+                    id: size.id,
+                    name: size.name,
+                    count: size.ProductSize.count,
+                })),
+            }));
 
             res.status(200).json({
-                products,
+                products: formattedProducts,
                 total: count,
                 totalPages: Math.ceil(count / limit),
                 currentPage: page,

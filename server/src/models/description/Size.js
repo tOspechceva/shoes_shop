@@ -3,7 +3,7 @@ export default (sequelize, DataTypes) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-        }, 
+        },
     }, {
         timestamps: false,
     });
@@ -14,6 +14,8 @@ export default (sequelize, DataTypes) => {
             foreignKey: 'SizeId',
             otherKey: 'ProductId',
         });
+        // Связь с ProductSize
+        Size.hasMany(models.ProductSize, { foreignKey: 'SizeId' });
     };
 
     return Size;

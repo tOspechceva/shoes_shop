@@ -1,4 +1,4 @@
-import ManufacturerController from "../controllers/ManufacturerController.js";
+import ManufacturerController from "../controllers/description/ManufacturerController.js";
 
 export const  ManufacturerRoutes = (app) => {
 

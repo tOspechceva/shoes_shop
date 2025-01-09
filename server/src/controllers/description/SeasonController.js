@@ -1,13 +1,13 @@
-import bd from '../models/index.js';
+import bd from '../../models/index.js';
 
-const { Size } = bd;
+const { Season } = bd;
 
 export default {
     async add(req, res) {
         try {
-            const size = await Size.create(req.body);
+            const season = await Season.create(req.body);
             res.send({
-                size: size
+                season: season
             });
         } catch  {
                 res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
@@ -21,7 +21,7 @@ export default {
             }
 
             // Создаем записи в базе данных для каждого цвета
-            const created = await Promise.all(items.map(item => Size.create({ name: item })));
+            const created = await Promise.all(items.map(item => Season.create({ name: item })));
 
             res.send({
                 items: created
@@ -33,7 +33,7 @@ export default {
     },
     async get(req, res) {
         try {
-            const item = await Size.findAll();
+            const item = await Season.findAll();
             res.status(200).json(item);
         } catch {
             res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
@@ -44,29 +44,29 @@ export default {
             const { id } = req.params;
             console.log('Request for ID:', id);
 
-            const item = await Size.findByPk(id);
+            const item = await Season.findByPk(id);
 
             if (!item) {
-                return res.status(404).json({ error: 'Размер не найден' });
+                return res.status(404).json({ error: 'Сезон не найдена' });
             }
 
             res.json(item);
         } catch (error) {
-            console.error('Ошибка при получения размера:', error);
-            res.status(500).json({ error: 'Не удалось получить размер.' });
+            console.error('Ошибка при получения сезона:', error);
+            res.status(500).json({ error: 'Не удалось получить сезон.' });
         }
     },
     async delete(req, res) {
         try {
             const { id } = req.params;
-            const deleted = await Size.destroy({
+            const deleted = await Season.destroy({
                 where: { id }
             });
 
             if (deleted) {
                 res.status(204).send();
             } else {
-                res.status(404).json({ error: 'Размер не найден' });
+                res.status(404).json({ error: 'Сезон не найдена' });
             }
 
         } catch (error) {
@@ -77,17 +77,16 @@ export default {
     async update(req, res) {
         try {
             const { id } = req.params;
-            const [updeted] = await Size.update(req.body, { where: { id } });
+            const [updeted] = await Season.update(req.body, { where: { id } });
 
             if (updeted) {
-                const update = await Size.findByPk(id);
+                const update = await Season.findByPk(id);
                 res.status(200).json(update);
             } else {
-                res.status(404).json({ error: "Размер не найден" });
+                res.status(404).json({ error: "Сезон не существует" });
             }
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
     }
-
 };

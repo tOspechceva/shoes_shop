@@ -9,6 +9,8 @@ import { SizeRoutes } from "./SizeRouter.js";
 import { TypeRoutes } from "./TypeRouter.js";
 import { UserRoutes } from "./UserRouter.js";
 import { SidebarRoutes } from "./SidebarRouter.js";
+import { CartRoutes } from "./CartRouter.js";
+
 
 export const setupRoutes = (app) => {
     ClapsRoutes(app);
@@ -22,4 +24,5 @@ export const setupRoutes = (app) => {
     TypeRoutes(app);
     UserRoutes(app);
     SidebarRoutes(app);
+    CartRoutes(app);
 }

@@ -1,4 +1,4 @@
-import InsulationController from '../controllers/InsulationController.js'
+import InsulationController from '../controllers/description/InsulationController.js'
 
 export const InsulationRoutes = (app) => {
 

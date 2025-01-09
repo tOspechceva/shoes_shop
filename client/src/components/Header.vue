@@ -30,6 +30,8 @@ header {
     width: 100%;
     padding: 10px 0;
     background-color: #4c6e0c;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 /* Центрирование заголовка */

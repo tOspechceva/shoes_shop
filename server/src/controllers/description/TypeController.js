@@ -1,4 +1,4 @@
-import bd from '../models/index.js';
+import bd from '../../models/index.js';
 
 const { Type } = bd;
 

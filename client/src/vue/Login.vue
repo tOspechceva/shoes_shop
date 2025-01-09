@@ -57,9 +57,10 @@ export default {
                     email: this.email,
                     password: this.password,
                 });
-
+                const data = response.data;
+            
                 this.$store.dispatch('login', {
-                    user: response.data.user,
+                    user_id: data.user.id,
                     token: response.data.token,
                 });
 

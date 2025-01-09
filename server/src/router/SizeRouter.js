@@ -1,4 +1,4 @@
-import SizeController from "../controllers/SizeController.js";
+import SizeController from "../controllers/description/SizeController.js";
 
 export const SizeRoutes = (app) => {
     // Добавить размер

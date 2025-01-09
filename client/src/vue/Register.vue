@@ -1,77 +1,73 @@
 <template>
   <Header></Header>
   <Navigation></Navigation>
-    <div class="register_main">
+  <div class="register_main">
     <form @submit.prevent="register">
-        <div class="register_container">
-            <h2>Регистрация</h2>
-
-                <label for="email">Email:</label>
-                <input type="email" 
-                       name="email" 
-                       v-model="email"
-                       placeholder="email"/>
-
-                <label for="password">Пароль:</label>
-                <input type="password" 
-                name="password" 
-
-                v-model="password"
-                autocomplete="new-password"
-                placeholder="password"/>
-                <br>
-                <div class ="error" v-html="error" />
-                <br>
-                <button type="submit" @click="register">
-                Регистрация</button>
-          
+      <div class="register_container">
+        <h2>Регистрация</h2>
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          name="email"
+          v-model="email"
+          placeholder="email"
+        />
+        <label for="password">Пароль:</label>
+        <input
+          type="password"
+          name="password"
+          v-model="password"
+          autocomplete="new-password"
+          placeholder="password"
+        />
+        <br />
+        <div class="error" v-if="error" v-html="error"></div>
+        <br />
+        <button type="submit">Регистрация</button>
       </div>
-       </form>
-   
-      
-    </div>
-       <Footer></Footer>
+    </form>
+  </div>
+  <Footer></Footer>
 </template>
 
 <script>
-import AuthenticationService from'@/services/AuthenticationService'
-import Navigation from '../components/Navigation.vue'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue';
+import Navigation from "../components/Navigation.vue";
+import Header from "../components/Header.vue";
+import Footer from "../components/Footer.vue";
+import AuthenticationService from "@/services/AuthenticationService";
+
 export default {
-  name: 'Register',
-  components: {
-        Navigation,
-        Footer,
-        Header
-    },
-  data () {
+  name: "Register",
+  components: { Navigation, Header, Footer },
+  data() {
     return {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       error: null,
-      colore: null
-    }
+    };
   },
   methods: {
     async register() {
       try {
         const response = await AuthenticationService.register({
           email: this.email,
-          password: this.password
-        })
-          // Вызываем login через Vuex с данными пользователя и токеном
-        this.$store.dispatch('register', {
-            user: response.data.user,
-            token: response.data.token,
+          password: this.password,
         });
-        this.$router.push('/login');
+
+        // Вызываем register через Vuex
+        await this.$store.dispatch("register", {
+          user: response.data.user.id,
+          token: response.data.token,
+        });
+
+        // Перенаправляем на логин
+        this.$router.push("/login");
       } catch (error) {
-          this.error = error.response.data.error
+        this.error = error.response?.data?.error || "Ошибка регистрации";
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

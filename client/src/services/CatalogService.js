@@ -5,12 +5,12 @@ export default {
         return Api().get('paginated', params); // Параметры передаются через `params`
     },
     getProductById(id) {
-        return Api().get(`/products/${id}`);
+        return Api().get(`products/${id}`);
     },
     filtered(params){
-        return Api().get('/filtered', params);
+        return Api().get('filtered', params);
     },
     getSeasonsWithTypes() {
-        return Api().get('/seasons-with-types');
+        return Api().get('seasons-with-types');
     }
 }

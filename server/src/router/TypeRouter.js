@@ -1,4 +1,4 @@
-import TypeController from "../controllers/TypeController.js";
+import TypeController from "../controllers/description/TypeController.js";
 export const TypeRoutes = (app) => {
     // Добавить тип
     app.post('/addType',

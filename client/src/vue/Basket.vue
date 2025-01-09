@@ -2,27 +2,30 @@
   <Header></Header>
   <Navigation></Navigation>
   <main>
-    <h2>Корзина</h2>
+    <h2 class ="header">Корзина</h2>
     <div class="basket">
-      <div class="product" v-for="product in products" :key="product.id">
+      <div class="product" v-for="product in items" :key="product.id">
         <input 
           type="checkbox" 
           v-model="product.selected" 
           class="select-checkbox" 
         />
-        <img :src="product.img" :alt="product.name" />
-        <router-link :to="`/product/${product.id}`">
-          <h2>{{ product.name }}</h2>
-        </router-link>
-        <p class="price">Цена: {{ product.price }} руб.</p>
+        <img :src="product.product.img" :alt="product.product.name" class="product-image" />
+           <router-link :to="`/product/${product.product.id}`" class="product-link">
+              <h2 class="product-name">
+                {{ product.product.name }}
+              </h2>
+          </router-link>
+        <p class="price">Цена: {{ product.product.price }} руб.</p>
         <div class="size-select">
           <label for="size">Размер:</label>
           <select 
-            v-model="product.size" 
+            v-model="product.product.size" 
             :name="`size-${product.id}`" 
             :id="`size-${product.id}`"
+            disabled
           >
-            <option v-for="size in sizes" :key="size" :value="size">{{ size }}</option>
+            <option :value="product.product.size">{{ product.product.size }}</option>
           </select>
         </div>
         <div class="quantity-controls">
@@ -38,13 +41,13 @@
       <button class="checkout-btn" @click="proceedToCheckout">Перейти к оформлению заказа</button>
     </div>
   </main>
-  <Footer></Footer>
 </template>
 
 <script>
 import Navigation from '../components/Navigation.vue';
 import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
+import AuthenticationService from '@/services/AuthenticationService.js';
 
 export default {
   name: 'Basket',
@@ -55,22 +58,38 @@ export default {
   },
   data() {
     return {
-      sizes: Array.from({ length: 16 }, (_, i) => i + 35), // Размеры от 35 до 50
-      products: [
-        { id: 1, name: 'Кроссовки', price: 5000, quantity: 1, img: 'path-to-image-1.jpg', selected: false, size: 38 },
-        { id: 2, name: 'Сапоги', price: 7000, quantity: 2, img: 'path-to-image-2.jpg', selected: false, size: 40 },
-        { id: 3, name: 'Мокасины', price: 4500, quantity: 1, img: 'path-to-image-3.jpg', selected: false, size: 42 },
-      ],
+      items: [],
     };
   },
   computed: {
     totalPrice() {
-      return this.products
+      return this.items
         .filter((product) => product.selected)
-        .reduce((sum, product) => sum + product.price * product.quantity, 0);
+        .reduce((sum, product) => sum + product.product.price * product.quantity, 0);
     },
   },
   methods: {
+    async fetchBasket() {
+      try {
+        const cartId = localStorage.getItem('cart_id');
+        console.log(cartId)
+
+        if (!cartId) {
+          console.error('cart_id не найден');
+          return;
+        }
+    
+        const params = {
+            cart_id: cartId,
+            user_id:localStorage.getItem('user_id')
+           };
+        const response = await AuthenticationService.getBasket({ params });
+        this.items = response.data.items;
+        console.log(response)
+      } catch (error) {
+        console.error('Ошибка при загрузке товаров:', error);
+      }
+    },
     increaseQuantity(product) {
       product.quantity++;
     },
@@ -80,10 +99,10 @@ export default {
       }
     },
     removeProduct(product) {
-      this.products = this.products.filter((p) => p.id !== product.id);
+      this.items = this.items.filter((p) => p.id !== product.id);
     },
     proceedToCheckout() {
-      const selectedProducts = this.products.filter((product) => product.selected);
+      const selectedProducts = this.items.filter((product) => product.selected);
       if (selectedProducts.length > 0) {
         console.log('Переход к оформлению заказа', selectedProducts);
         this.$router.push('/checkout');
@@ -92,10 +111,24 @@ export default {
       }
     },
   },
+  created() {
+    this.fetchBasket();
+  },
 };
 </script>
 
 <style scoped>
+
+.header {
+    background-color: #233870;            /* Задаём тёмно-синий фон для заголовка */
+    color: #ffffff;                       /* Цвет текста белый */
+    font-size: 2rem;                        /* Размер шрифта для заголовка h1 */
+    font-family: 'Segoe Script', cursive;   /* Шрифт для заголовка (рукописный стиль) */
+    margin-bottom: 20px;                     /* Убираем нижний отступ, чтобы не было лишнего пространства после заголовка */
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+}
 .basket {
   display: flex;
   flex-direction: column;
@@ -109,10 +142,23 @@ export default {
   border: 1px solid #ccc;
   padding: 10px;
   border-radius: 5px;
-  justify-content: space-around;  /* Элементы внутри навигации равномерно распределены */
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
+  justify-content: space-between; /* Равномерное распределение */
+  margin-left: 10px;
+  margin-right: 10px;
 }
-
+/* Ограничение длины имени товара */
+.product-name {
+  max-width: 150px; /* Ограничение ширины */
+  overflow: hidden; /* Скрываем излишек */
+  text-overflow: ellipsis; /* Добавляем многоточие */
+  text-decoration: none; /* Убирает подчеркивание */
+  color: inherit; /* Убирает цвет ссылки, делает его как у обычного текста */
+}
+.product-link {
+  text-decoration: none; /* Убирает подчеркивание */
+  color: inherit; /* Сохраняет цвет текста */
+}
 .product img {
   width: 100px;
   height: 100px;
@@ -164,6 +210,7 @@ export default {
   font-weight: bold;
 }
 
+/* Кнопка удаления */
 .delete-btn {
   background-color: #ff4d4f;
   color: white;
@@ -172,6 +219,7 @@ export default {
   padding: 5px 10px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-right: 20px;
 }
 
 .delete-btn:hover {
@@ -180,24 +228,31 @@ export default {
 
 .select-checkbox {
   transform: scale(1.5);
-  margin-right: 10px;
+  margin-left: 20px;
   cursor: pointer;
 }
 
 .basket-footer {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+
   margin-top: 20px;
+  flex-direction: column; /* Размещаем элементы в колонку */
+  align-items: flex-end; /* Выравниваем элементы по правому краю */
+  margin-bottom: 30px;
+  margin-right: 10px;
 }
 
 .total {
   font-size: 1.2rem;
   font-weight: bold;
+  background-color: #f0f0f0;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .checkout-btn {
-  background-color: #28a745;
+  background-color: #4c6e0c;
   color: white;
   border: none;
   border-radius: 5px;
@@ -207,8 +262,9 @@ export default {
 }
 
 .checkout-btn:hover {
-  background-color: #218838;
+  background-color: #44630b;
 }
+
 </style>
 
 

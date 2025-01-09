@@ -1,4 +1,4 @@
-import MaterialController from "../controllers/MaterialController.js";
+import MaterialController from "../controllers/description/MaterialController.js";
 
 export const MaterialRoutes = (app) => {
     // Добавить материал

@@ -82,11 +82,16 @@ export default (sequelize, DataTypes) => {
             foreignKey: 'ProductId',
             otherKey: 'TypeId',
         });
+        // Связь с таблицей ProductSize через многие ко многим
         Product.belongsToMany(models.Size, {
             through: 'ProductSize',
             foreignKey: 'ProductId',
             otherKey: 'SizeId',
         });
+
+        // Связь с ProductSize
+        Product.hasMany(models.ProductSize, { foreignKey: 'ProductId' });
+
         Product.belongsToMany(models.Claps, { through: models.ProductClaps });
     };
 
