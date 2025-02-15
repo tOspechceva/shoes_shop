@@ -28,6 +28,15 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        role_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true, // Поле может быть пустым, если родитель удалён
+            defaultValue: null, // Значение по умолчанию при удалении родителя
+            references: {
+                model: 'Insulations', // Связь с таблицей Insulations
+                key: 'id',
+            },
+        },
     }, {
         timestamps: true,
         hooks: {
@@ -47,6 +56,7 @@ export default (sequelize, DataTypes) => {
     // Связи для Cart
     User.associate = (models) => {
         User.hasMany(models.Cart, { foreignKey: 'user_id' }); 
+        User.belongsTo(models.Role, { foreignKey: 'role_id' }); // Один ко многим (одна роль у многих пользователей)
     };
 
     return User;

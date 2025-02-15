@@ -1,4 +1,5 @@
 <template>
+    <Nav/>
   <div class="add-product">
     <h1>Добавить товар</h1>
     <form @submit.prevent="addProduct">
@@ -54,41 +55,26 @@
         </select>
       </div>
 
-      <!-- Массивы данных -->
+      <!-- Размеры с количеством -->
       <div>
         <h3>Размеры</h3>
         <div v-for="(size, index) in product.sizes" :key="index" class="array-item">
-          <input type="number" v-model="product.sizes[index]" placeholder="Введите размер" />
+          <input type="number" v-model="size.value" placeholder="Размер" required />
+          <input type="number" v-model="size.quantity" placeholder="Количество" min="0" required />
           <button type="button" @click="removeItem(product.sizes, index)">Удалить</button>
         </div>
-        <button type="button" @click="addItem(product.sizes, '')">Добавить размер</button>
+        <button type="button" @click="addItem(product.sizes, { value: '', quantity: 0 })">Добавить размер</button>
       </div>
 
+      <!-- Загрузка изображений -->
       <div>
-        <h3>Типы картинок</h3>
-        <div v-for="(img, index) in product.img_types" :key="index" class="array-item">
-          <input type="url" v-model="product.img_types[index]" placeholder="Введите ссылку на картинку" />
-          <button type="button" @click="removeItem(product.img_types, index)">Удалить</button>
+        <h3>Изображения</h3>
+        <div v-for="(img, index) in product.img" :key="index" class="array-item">
+          <input type="file" @change="onFileChange($event, index)" />
+          <span v-if="img.name">{{ img.name }}</span>
+          <button type="button" @click="removeItem(product.img, index)">Удалить</button>
         </div>
-        <button type="button" @click="addItem(product.img_types, '')">Добавить тип картинки</button>
-      </div>
-
-      <div>
-        <h3>Цвета</h3>
-        <div v-for="(color, index) in product.colors" :key="index" class="array-item">
-          <input type="text" v-model="product.colors[index]" placeholder="Введите цвет" />
-          <button type="button" @click="removeItem(product.colors, index)">Удалить</button>
-        </div>
-        <button type="button" @click="addItem(product.colors, '')">Добавить цвет</button>
-      </div>
-
-      <div>
-        <h3>Застежки</h3>
-        <div v-for="(fastener, index) in product.fasteners" :key="index" class="array-item">
-          <input type="text" v-model="product.fasteners[index]" placeholder="Введите тип застежки" />
-          <button type="button" @click="removeItem(product.fasteners, index)">Удалить</button>
-        </div>
-        <button type="button" @click="addItem(product.fasteners, '')">Добавить застежку</button>
+        <button type="button" @click="addItem(product.img, null)">Добавить изображение</button>
       </div>
 
       <!-- Кнопка отправки -->
@@ -99,9 +85,10 @@
 
 <script>
 import axios from "axios";
-
+import Nav from "./description/Nav.vue";
 export default {
-   name: 'AddProduct',
+  name: "AddProduct",
+  components: { Nav },
   data() {
     return {
       product: {
@@ -113,10 +100,8 @@ export default {
         id_material: null,
         id_insulation: null,
         id_manufacturer: null,
-        sizes: [], // Список размеров
-        img_types: [], // Список ссылок на картинки
-        colors: [], // Список цветов
-        fasteners: [], // Список типов застежек
+        sizes: [], // Список размеров с количеством
+        img: [], // Список загруженных изображений
       },
       seasons: [],
       materials: [],
@@ -147,9 +132,36 @@ export default {
     removeItem(array, index) {
       array.splice(index, 1);
     },
+    onFileChange(event, index) {
+      const file = event.target.files[0];
+      if (file) {
+        this.$set(this.product.img, index, file);
+      }
+    },
     async addProduct() {
       try {
-        const response = await axios.post("/api/products", this.product);
+        const formData = new FormData();
+
+        // Добавляем основные данные товара
+        Object.entries(this.product).forEach(([key, value]) => {
+          if (key === "img") {
+            value.forEach((file, index) => {
+              if (file) {
+                formData.append(`img[${index}]`, file);
+              }
+            });
+          } else if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, value);
+          }
+        });
+
+        const response = await axios.post("/api/products", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         alert("Товар успешно добавлен!");
         this.resetForm();
       } catch (error) {
@@ -168,9 +180,7 @@ export default {
         id_insulation: null,
         id_manufacturer: null,
         sizes: [],
-        img_types: [],
-        colors: [],
-        fasteners: [],
+        img: [],
       };
     },
   },

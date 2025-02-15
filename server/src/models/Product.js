@@ -60,23 +60,19 @@ export default (sequelize, DataTypes) => {
                 model: 'Manufacturers', // Связь с таблицей Manufacturers
                 key: 'id',
             },
-        },
-        
-        img: {
-            type: DataTypes.STRING,
-            allowNull: true, // Ссылка может быть пустой
-
-        },
+        }
     }, {
         timestamps: true, // Включаем `createdAt` и `updatedAt`
     });
     Product.associate = (models) => {
+
         Product.belongsTo(models.Season, { foreignKey: 'id_season' });
         Product.belongsTo(models.Material, { foreignKey: 'id_material' });
         Product.belongsTo(models.Insulation, { foreignKey: 'id_insulation' });
         Product.belongsTo(models.Manufacturer, { foreignKey: 'id_manufacturer' });
+
         Product.belongsToMany(models.Colore, { through: models.ProductColore });
-       
+        Product.belongsToMany(models.Claps, { through: models.ProductClaps });
         Product.belongsToMany(models.Type, {
             through: 'ProductTypes',
             foreignKey: 'ProductId',
@@ -89,19 +85,21 @@ export default (sequelize, DataTypes) => {
             otherKey: 'SizeId',
         });
 
-        // Связь с ProductSize
-        Product.hasMany(models.ProductSize, { foreignKey: 'ProductId' });
+    
+        // Связь с таблицей ProductImage (один ко многим)
+        Product.hasMany(models.ProductImage, {
+            foreignKey: 'ProductId',
+            onDelete: 'CASCADE', // Удаляем связанные изображения, если товар удаляется
+        });
+        
+        Product.hasMany(models.ProductSize, { foreignKey: 'ProductId', onDelete: 'CASCADE' });
 
-        Product.belongsToMany(models.Claps, { through: models.ProductClaps });
     };
-
-  
 
     return Product;
 };
 
 
-  
 
-      
-    
+
+

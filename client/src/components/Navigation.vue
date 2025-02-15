@@ -138,30 +138,23 @@ nav a:hover {
 }
 
 .type-dropdown {
-    display: none;
-    /* Скрываем вложенные выпадающие меню по умолчанию */
+    display: none; /* Скрываем подменю типов по умолчанию */
     position: absolute;
-    /* Абсолютное позиционирование относительно родителя */
-    top: 100%;
-    /* Выпадающее меню появляется под родительским элементом */
-    left: 0;
-    /* Позиция по горизонтали — слева */
-    background-color: #4c6e0c;
-    /* Цвет фона для выпадающего меню */
+    left: 100%; /* Меню типов отображается справа от сезона */
+    top: 0;
+    background-color: #233870; /* Цвет фона для типов */
     padding: 10px;
-    /* Внутренний отступ для выпадающего меню */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    /* Тень для выпадающего меню */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Тень для подменю */
 }
 
-.season-dropdown{
-    display: none;               /* Скрываем вложенные выпадающие меню по умолчанию */
-    position: absolute;          /* Абсолютное позиционирование относительно родителя */
-    top: 100%;                   /* Выпадающее меню появляется под родительским элементом */
-    left: 0;                     /* Позиция по горизонтали — слева */
-    background-color:#233870;/* Цвет фона для выпадающего меню */
-    padding: 10px;              /* Внутренний отступ для выпадающего меню */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);/* Тень для выпадающего меню */
+.season-dropdown {
+    display: none; /* Скрываем подменю сезонов по умолчанию */
+    position: absolute;
+    top: 100%; /* Меню сезонов появляется под элементом "Каталог" */
+    left: 0;
+    background-color: #233870; /* Цвет фона для сезонов */
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Тень для подменю */
 }
 
 .catalog-menu:hover .season-dropdown,
@@ -187,6 +180,7 @@ nav a:hover {
     color: #fff;
     padding: 8px;
     cursor: pointer;
+    position: relative; /* Нужно для корректного позиционирования вложенных элементов */
 }
 .type-dropdown :hover{
     background-color: #233870;
@@ -197,7 +191,18 @@ nav a:hover {
     background-color: #4c6e0c;
     /* Новый цвет фона для выделения сезона */
 }
-
+.season-item:hover .type-dropdown {
+    display: block;
+}
+.season-item::after {
+    content: "";
+    position: absolute;
+    top: -10px; /* Увеличивает зону сверху */
+    left: -10px; /* Увеличивает зону слева */
+    right: -10px; /* Увеличивает зону справа */
+    bottom: -10px; /* Увеличивает зону снизу */
+    z-index: -1;
+}
 /* Стиль для подменю типов обуви */
 .type-dropdown {
     display: none;
@@ -215,9 +220,4 @@ nav a:hover {
     display: block;
    
 }
-
-
-
-
-
 </style>

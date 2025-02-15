@@ -24,6 +24,6 @@ export const  ManufacturerRoutes = (app) => {
         ManufacturerController.delete);
 
     //Обновление производителя
-    app.put('/putManufacture../:id',
+    app.put('/putManufacture/:id',
         ManufacturerController.update);
 }

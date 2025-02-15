@@ -21,6 +21,7 @@ export const ClapsRoutes = (app) => {
     app.delete('/deleteClaps/:id',
         ClapsController.delete);
 
+    
     //Обновление застежки
     app.put('/putClaps/:id',
         ClapsController.update);

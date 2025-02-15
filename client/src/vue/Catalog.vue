@@ -8,6 +8,8 @@
          <div class="catalog-page">
             
        <Sidebar 
+       :seasonId="seasonId"
+        :typeId="typeId"
       @season-selected="handleSeasonSelect"
       @type-selected="handleTypeSelect" 
     />
@@ -54,13 +56,14 @@
             @click="handlePageChange(currentPage - 1)">
             Предыдущая
         </button>
-    
-        <span v-for="page in totalPages" :key="page" class="page-number">
-            <button 
-                :class="{ active: page === currentPage }" 
-                @click="handlePageChange(page)">
-                {{ page }}
-            </button>
+
+        <span 
+          v-for="page in totalPages" 
+          :key="page" 
+          class="page-number"
+          :class="{ active: page === currentPage }"
+          @click="handlePageChange(page)">
+            {{ page }}
         </span>
     
         <button class="page-number"
@@ -86,7 +89,7 @@ import AuthenticationService from '@/services/AuthenticationService.js';
 import CatalogService from '@/services/CatalogService.js';
 export default {
     name: 'Catalog',
-    props: ['seasonId','typeId'], // Получаем seasonId как пропс
+    props: ['seasonId', 'typeId'], // Получаем seasonId как пропс
     components: {
         Navigation,
         Header,
@@ -100,86 +103,101 @@ export default {
             currentPage: 1,             // Текущая страница
             totalPages: 1,              // Общее количество страниц
             itemsPerPage: 15,           // Количество товаров на странице
-            selectedSeasonId: null ,    // id выбранного сезона
+            selectedSeasonId: null,    // id выбранного сезона
             selectedTypeId: null,       // id выбранного типа
             selectedSizes: {},          // Хранит выбранные размеры по id товара
         };
     },
-     methods: {
-    async fetchProducts(page = 1) {
-        try {
-            const params = {
-            page: page,
-            limit: this.itemsPerPage,
-        };
+    methods: {
+        async fetchProducts(page = 1) {
+            try {
+                const params = {
+                    page: page,
+                    limit: this.itemsPerPage,
+                };
 
-        // Добавляем параметры фильтрации только если они не null
-        if (this.seasonId !== null ) {
-            params.seasonId = this.seasonId;
-            if (this.typeId !== null) {
-                params.typeId = this.typeId;
+                // Добавляем параметры фильтрации только если они не null
+                if (this.seasonId !== null) {
+                    params.seasonId = this.seasonId;
+                    if (this.typeId !== null) {
+                        params.typeId = this.typeId;
+                    }
+                }
+                if (this.selectedSeasonId !== null) {
+                    params.seasonId = this.selectedSeasonId;
+                }
+                if (this.selectedTypeId !== null) {
+                    params.typeId = this.selectedTypeId;
+                }
+
+                const response = await CatalogService.paginated({ params });
+                const data = response.data; // Axios возвращает данные в `response.data`
+                this.products = data.products;
+                this.currentPage = data.currentPage;
+                this.totalPages = data.totalPages;
+
+
+            } catch (error) {
+                console.error('Ошибка при загрузке товаров:', error);
             }
-        }
-        if (this.selectedSeasonId !== null ) {
-            params.seasonId = this.selectedSeasonId;
-        }
-        if (this.selectedTypeId !== null) {
-            params.typeId = this.selectedTypeId;
-        }
+        },
+        handlePageChange(page) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.fetchProducts(page);
+            }
+        },
+        handleSeasonSelect({ seasonId }) {
+            // Обновляем выбранный id сезона
+            this.selectedSeasonId = seasonId;
+            this.selectedTypeId = null;
+            this.fetchProducts(); // Загрузка товаров с новым seasonId
+        },
+        handleTypeSelect({ seasonId, typeId }) {
+            // Обновляем выбранные id сезона и типа
+            this.selectedSeasonId = seasonId;
+            this.selectedTypeId = typeId;
+            this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
+        },
+        // Метод для выбора размера
+        selectSize(productId, sizeId) {
+            this.selectedSizes = { ...this.selectedSizes, [productId]: sizeId };
+        },
 
-        const response = await CatalogService.paginated({ params });
-        const data = response.data; // Axios возвращает данные в `response.data`
-        this.products = data.products;
-        this.currentPage = data.currentPage;
-        this.totalPages = data.totalPages;
-    
-        
-        } catch (error) {
-            console.error('Ошибка при загрузке товаров:', error);
-        }
-    },
-    handlePageChange(page) {
-        if (page >= 1 && page <= this.totalPages) {
-            this.fetchProducts(page);
-        }
-    },
-    handleSeasonSelect({seasonId}) {
-      // Обновляем выбранный id сезона
-      this.selectedSeasonId = seasonId;
-      this.selectedTypeId = null;
-      this.fetchProducts(); // Загрузка товаров с новым seasonId
-    },
-    handleTypeSelect({ seasonId, typeId }) {
-      // Обновляем выбранные id сезона и типа
-      this.selectedSeasonId = seasonId;
-      this.selectedTypeId = typeId;
-      this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
-    },
-   // Метод для выбора размера
-    selectSize(productId, sizeId) {
-      this.selectedSizes = { ...this.selectedSizes, [productId]: sizeId };
-    },
+        // Метод для добавления товара в корзину
+        addToCart(product) {
+            const selectedSize = this.selectedSizes[product.id];
 
-    // Метод для добавления товара в корзину
-    addToCart(product) {
-      const selectedSize = this.selectedSizes[product.id];
-      
-      if (!selectedSize) {
-        alert("Пожалуйста, выберите размер перед добавлением в корзину!");
-        return;
-      }
-    AuthenticationService.addCartItem({
-        productId: product.id,
-        cartId: localStorage.getItem('cart_id'),
-        sizeId: selectedSize,
-        quantity:1 });
-      
-    alert("Товар успешно добавлен в корзину!");
+            if (!selectedSize) {
+                alert("Пожалуйста, выберите размер перед добавлением в корзину!");
+                return;
+            }
+            AuthenticationService.addCartItem({
+                productId: product.id,
+                cartId: localStorage.getItem('cart_id'),
+                sizeId: selectedSize,
+                quantity: 1
+            });
+
+            alert("Товар успешно добавлен в корзину!");
+        },
     },
-},
-created() {
-    this.fetchProducts(); // Загрузка первой страницы при монтировании компонента
-},
+    created() {
+        if (this.seasonId) {
+            this.selectedSeasonId = parseInt(this.seasonId); // Устанавливаем выбранный сезон из маршрута
+        }
+        if (this.typeId) {
+            this.selectedTypeId = parseInt(this.typeId); // Устанавливаем выбранный тип из маршрута
+        }
+        this.fetchProducts(); // Загрузка товаров
+    },
+    watch: {
+        $route(to) {
+            // Обновляем состояние при изменении маршрута
+            this.selectedSeasonId = parseInt(to.params.seasonId) || null;
+            this.selectedTypeId = parseInt(to.params.typeId) || null;
+            this.fetchProducts(); // Загружаем товары для нового маршрута
+        },
+    },
 }
 </script>
 <style scoped>
@@ -273,23 +291,23 @@ h2 {
 }
 
 .page-number {
-    display: inline-block;
-    margin: 0 5px;
-    /* Отступ между цифрами */
-    padding: 8px 12px;
-    border: 1px solid #233870;
-    border-radius: 5px;
-    color: #233870;
-    cursor: pointer;
-    background-color: #fff;  /* Цвет фона панели – белый */
+    display: inline-flex; /* Flex для выравнивания текста по центру */
+    justify-content: center; /* Центрируем текст */
+    align-items: center; /* Центрируем по вертикали */
+    margin: 0 5px; /* Отступы между кнопками */
+    padding: 10px 15px; /* Увеличиваем область клика */
+    border: 1px solid #233870; /* Граница */
+    border-radius: 5px; /* Скругленные углы */
+    color: #233870; /* Цвет текста */
+    cursor: pointer; /* Указатель при наведении */
+    background-color: #fff; /* Белый фон */
+    transition: background-color 0.3s ease; /* Анимация при наведении */
 }
 
 .page-number.active,
-/* Активная страница */
 .page-number:hover {
-    background-color: #233870;
-    color: white;
-    
+    background-color: #233870; /* Цвет активной страницы */
+    color: white; /* Цвет текста */
 }
 
  main {
