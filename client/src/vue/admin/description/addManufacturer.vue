@@ -146,7 +146,10 @@ export default {
             this.error = error.response?.data?.error || "Ошибка при удалении производителя";
         }
     }
-    }
+    },
+  created() {
+      this.getAll(); // Загрузка товаров
+  }
 }
 </script>
 

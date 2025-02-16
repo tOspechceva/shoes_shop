@@ -120,7 +120,10 @@ export default {
             this.error = error.response?.data?.error || "Ошибка при удалении цвета";
         }
     }
-    }
+    },
+  created() {
+      this.getAll(); // Загрузка товаров
+  }
 }
 </script>
 

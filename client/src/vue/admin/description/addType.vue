@@ -122,8 +122,12 @@ export default {
             this.error = error.response?.data?.error || "Ошибка при удалении типа";
         }
     }
-    }
+    },
+  created() {
+      this.getAll(); // Загрузка товаров
+  }
 }
+
 </script>
 
 <style scoped>

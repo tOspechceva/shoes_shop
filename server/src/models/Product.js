@@ -1,71 +1,84 @@
-
 export default (sequelize, DataTypes) => {
     const Product = sequelize.define('Product', {
         name: {
             type: DataTypes.STRING,
-            allowNull: false, // Поле обязательно
+            allowNull: false,
         },
         price: {
             type: DataTypes.FLOAT,
-            allowNull: false, // Поле обязательно
+            allowNull: false,
             validate: {
-                isFloat: true, // Убедимся, что цена — число с плавающей точкой
-                min: 0, // Цена не может быть отрицательной
+                isFloat: true,
+                min: 0,
             },
         },
         description: {
-            type: DataTypes.TEXT, // Для длинного текста описания
-            allowNull: true, // Описание может быть пустым
+            type: DataTypes.TEXT,
+            allowNull: true,
         },
         rating: {
-            type: DataTypes.FLOAT,
-            allowNull: true, // Рейтинг может отсутствовать
+            type: DataTypes.INTEGER,
+            allowNull: true,
             validate: {
-                min: 0, // Рейтинг не может быть меньше 0
-                max: 5, // Рейтинг не может быть больше 5
+                min: 0,
+                max: 100,
             },
+        },
+        views_count: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        purchases_count: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
         },
         id_season: {
             type: DataTypes.INTEGER,
-            allowNull: true, // Поле может быть пустым, если родитель удалён
-            defaultValue: null, // Значение по умолчанию при удалении родителя
+            allowNull: true,
+            defaultValue: null,
             references: {
-                model: 'Seasons', // Связь с таблицей Seasons
+                model: 'Seasons',
                 key: 'id',
             },
         },
         id_material: {
             type: DataTypes.INTEGER,
-            allowNull: true, // Поле может быть пустым, если родитель удалён
-            defaultValue: null, // Значение по умолчанию при удалении родителя
+            allowNull: true,
+            defaultValue: null,
             references: {
-                model: 'Materials', // Связь с таблицей Materials
+                model: 'Materials',
                 key: 'id',
             },
         },
         id_insulation: {
             type: DataTypes.INTEGER,
-            allowNull: true, // Поле может быть пустым, если родитель удалён
-            defaultValue: null, // Значение по умолчанию при удалении родителя
+            allowNull: true,
+            defaultValue: null,
             references: {
-                model: 'Insulations', // Связь с таблицей Insulations
+                model: 'Insulations',
                 key: 'id',
             },
         },
         id_manufacturer: {
             type: DataTypes.INTEGER,
-            allowNull: true, // Поле может быть пустым, если родитель удалён
-            defaultValue: null, // Значение по умолчанию при удалении родителя
+            allowNull: true,
+            defaultValue: null,
             references: {
-                model: 'Manufacturers', // Связь с таблицей Manufacturers
+                model: 'Manufacturers',
                 key: 'id',
             },
+        },
+        image_path: {
+            type: DataTypes.STRING,
+            allowNull: true,
         }
     }, {
-        timestamps: true, // Включаем `createdAt` и `updatedAt`
+        timestamps: true,
     });
-    Product.associate = (models) => {
 
+    Product.associate = (models) => {
         Product.belongsTo(models.Season, { foreignKey: 'id_season' });
         Product.belongsTo(models.Material, { foreignKey: 'id_material' });
         Product.belongsTo(models.Insulation, { foreignKey: 'id_insulation' });
@@ -78,26 +91,25 @@ export default (sequelize, DataTypes) => {
             foreignKey: 'ProductId',
             otherKey: 'TypeId',
         });
-        // Связь с таблицей ProductSize через многие ко многим
         Product.belongsToMany(models.Size, {
             through: 'ProductSize',
             foreignKey: 'ProductId',
             otherKey: 'SizeId',
         });
 
-    
-        // Связь с таблицей ProductImage (один ко многим)
         Product.hasMany(models.ProductImage, {
             foreignKey: 'ProductId',
-            onDelete: 'CASCADE', // Удаляем связанные изображения, если товар удаляется
+            onDelete: 'CASCADE',
         });
-        
-        Product.hasMany(models.ProductSize, { foreignKey: 'ProductId', onDelete: 'CASCADE' });
-
+        Product.hasMany(models.ProductSize, {
+            foreignKey: 'ProductId',
+            onDelete: 'CASCADE',
+        });
     };
 
     return Product;
 };
+
 
 
 

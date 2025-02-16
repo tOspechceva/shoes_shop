@@ -122,7 +122,10 @@ export default {
             this.error = error.response?.data?.error || "Ошибка при удалении материала";
         }
     }
-    }
+    },
+  created() {
+      this.getAll(); // Загрузка товаров
+  }
 }
 </script>
 
