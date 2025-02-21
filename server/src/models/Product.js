@@ -70,7 +70,7 @@ export default (sequelize, DataTypes) => {
                 key: 'id',
             },
         },
-        image_path: {
+        img: {
             type: DataTypes.STRING,
             allowNull: true,
         }

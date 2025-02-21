@@ -5,7 +5,8 @@ const { Product, Season, Material, Insulation, Manufacturer, Type, Size} = bd;
 export default {
     async add(req, res) {
         try {
-            const  item  = req.body;
+            const item = req.body;
+
             const product = await Product.create({
                 name: item.name,
                 price: item.price,
@@ -17,17 +18,41 @@ export default {
                 id_manufacturer: item.id_manufacturer,
                 img: item.img
             });
-            if (!Array.isArray(item.typeIds)) {
+
+            // Обработка типов
+            if (Array.isArray(item.typeIds)) {
+                await product.setTypes(item.typeIds);
+            } else {
                 return res.status(400).send({ error: 'Поле "typeIds" должно быть массивом.' });
             }
 
-            await product.setTypes(item.typeIds); // Связывает продукт с типами
+            // Обработка застежек
+            if (Array.isArray(item.clapsIds)) {
+                await product.setClaps(item.clapsIds);
+            } else {
+                return res.status(400).send({ error: 'Поле "clapsIds" должно быть массивом.' });
+            }
+
+            // Обработка размеров
+            if (Array.isArray(item.sizeIds)) {
+                await product.setSizes(item.sizeIds);
+            } else {
+                return res.status(400).send({ error: 'Поле "sizeIds" должно быть массивом.' });
+            }
+
+            // Обработка цветов
+            if (Array.isArray(item.coloreIds)) {
+                await product.setColores(item.coloreIds);
+            } else {
+                return res.status(400).send({ error: 'Поле "coloreIds" должно быть массивом.' });
+            }
 
             res.send({
                 product: product
             });
-        } catch  {
-                res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
+        } catch (error) {
+            console.error('Ошибка при добавлении товара:', error);
+            res.status(500).send({ error: 'Произошла непредвиденная ошибка.' });
         }
     },
 

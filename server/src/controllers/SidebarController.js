@@ -11,7 +11,7 @@ export default {
                 t.id AS type_id,
                 t.name AS type_name
                 FROM 
-                    Seasons s
+                    public."Seasons" s
                 LEFT JOIN 
                     public."Products" p ON s.id = p.id_season
                 LEFT JOIN 

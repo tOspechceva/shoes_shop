@@ -72,47 +72,68 @@
 
              <h3>Выберите размеры и укажите их кол-во:</h3>
 
-            <div v-for="(size, index) in product.sizes" :key="index" class="array-item">
-            <label :for="'id_size_' + index">Размер:</label>
-            <select :id="'id_size_' + index" v-model="size.value" required>
-                <option disabled value="">Выберите размер</option>
-                <option v-for="option in sizes" :key="option.id" :value="option.value">
-                    {{ option.name }}
-                </option>
-            </select>
+            <div v-for="(size, index) in product.sizes" :key="size.id || index" class="array-item">
+                <label :for="'id_size_' + size.id">Размер:</label>
+                <select :id="'id_size_' + size.id" v-model="size.value" required>
+                    <option disabled value="">Выберите размер</option>
+                    <option v-for="option in sizes" :key="option.id" :value="option.name">
+                      {{ option.name }}
+                    </option>
+                </select>
+          
+              <label :for="'id_quantity_' + size.id">Количество:</label>
+              <input
+                type="number"
+                :id="'id_quantity_' + size.id"
+                v-model="size.quantity"
+                placeholder="Количество"
+                min="0"
+                required
+              />
+          
+                <button type="button" @click="removeItem(product.sizes, index)">Удалить</button>
+            </div>
 
-         <label :for="'id_quantity_' + index">Количество:</label>
-         <input
-           type="number"
-           :id="'id_quantity_' + index"
-           v-model="size.quantity"
-           placeholder="Количество"
-           min="0"
-           required
-         />
-  
-        <button type="button" @click="removeItem(product.sizes, index)">Удалить</button>
-    </div>
 
-<button type="button" @click="addItem(product.sizes, { value: '', quantity: 0 })">
-  Добавить размер
-</button>
+            <button type="button" @click="addItem(product.sizes, { value: '', quantity: 0 })">
+              Добавить размер
+            </button>
 
             
-            <!-- Изображения -->
+            <!-- Главное фото -->
             <div>
-                <h3>Изображения</h3>
-                <div v-for="(img, index) in product.img" :key="index" class="array-item">
-                    <input type="file" @change="onFileChange($event, index)" />
-                    <span v-if="img.name">{{ img.name }}</span>
-                    <button type="button" @click="removeItem(product.img, index)">Удалить</button>
-                </div>
-                <button type="button" @click="addItem(product.img, null)">Добавить изображение</button>
+              <label for="mainImage">Главное фото (ссылка):</label>
+              <input type="text" id="mainImage" v-model="product.mainImage" @input="updateMainImagePreview" />
+              <div v-if="product.mainImage" class="image-preview">
+                <img :src="product.mainImage" alt="Главное фото" />
+              </div>
             </div>
             
-            <button type="submit">Добавить товар</button>
+            <!-- Массив ссылок на дополнительные фото -->
+            <div>
+              <h3>Дополнительные изображения</h3>
+              <div v-for="(link, index) in product.additionalImages" :key="index" class="array-item">
+                <input 
+                  type="text" 
+                  v-model="product.additionalImages[index]" 
+                  @input="updateImagePreview(index)" 
+                  placeholder="Вставьте ссылку на изображение" 
+                />
+                <button type="button" @click="removeItem(product.additionalImages, index)">Удалить</button>
+                <div v-if="product.additionalImages[index]" class="image-preview">
+                  <img :src="product.additionalImages[index]" alt="Дополнительное изображение" />
+                </div>
+              </div>
+              <button type="button" @click="addItem(product.additionalImages, '')">Добавить изображение</button>
+            </div>
+            
+            <a href="#" type="submit" class="add-to-cart" @click.prevent="addToCart()">
+                Добавить товар
+            </a>
+            
         </form>
     </div>
+    
 </template>
 
 <script>
@@ -137,7 +158,8 @@ export default {
                 clasps: [],
                 types: [],
                 sizes: [],
-                img: [],
+                mainImage: "",               // Главное фото
+                additionalImages: [],        // Массив ссылок на доп. фото
             },
             seasons: [],
             materials: [],
@@ -160,7 +182,7 @@ export default {
                 const claspsRes = await AdminService.getClaps();
                 const typesRes = await AdminService.getType();
                 const sizesRes = await AdminService.getSize();
-
+                sizesRes.data.name = Number(sizesRes.data.name);
                 this.seasons = seasonsRes.data;
                 this.materials = materialsRes.data;
                 this.insulations = insulationsRes.data;
@@ -173,9 +195,12 @@ export default {
                 console.error("Ошибка при загрузке данных:", error);
             }
         },
-        addItem(array, value) {
-            array.push(value);
-        },
+addItem(array, value) {
+  // Генерируем уникальный идентификатор для нового элемента
+  value.uid = Date.now() + '_' + Math.random();
+  array.push(value);
+}
+,
         removeItem(array, index) {
             array.splice(index, 1);
         },
@@ -225,6 +250,24 @@ export default {
                 img: [],
             };
         },
+        addToCart() {
+            console.log(this.product);
+
+            
+            alert("Товар успешно добавлен в корзину!");
+        },
+         updateMainImagePreview() {
+           // Предпросмотр главного фото обновляется автоматически через v-bind
+         },
+         updateImagePreview(index) {
+           // Предпросмотр обновляется автоматически через v-bind
+         },
+         addItem(array, value) {
+           array.push(value);
+         },
+         removeItem(array, index) {
+           array.splice(index, 1);
+         },
     },
     mounted() {
         this.fetchDependencies();
@@ -310,5 +353,37 @@ export default {
   .checkbox-text {
     margin-left: -40%;
   }
+  .add-to-cart {
+  display: inline-block;
+  background-color: #28a745; /* Зеленый фон */
+  color: #fff;             /* Белый текст */
+  text-decoration: none;   /* Убираем подчеркивание */
+  padding: 10px 20px;      /* Внутренние отступы */
+  border-radius: 4px;      /* Скругленные углы */
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+.add-to-cart:hover {
+  background-color: #218838; /* Темнее при наведении */
+  transform: translateY(-1px);
+}
+
+.add-to-cart:active {
+  background-color: #1e7e34; /* Еще темнее при клике */
+  transform: translateY(0);
+}
+
+.image-preview {
+  margin-top: 10px;
+  max-width: 200px;
+}
+
+.image-preview img {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 </style>
 
