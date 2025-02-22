@@ -26,9 +26,9 @@
           <div class="product" v-for="product in products" :key="product.id">
             <img :src="product.img" :alt="product.name" />
             <router-link :to="`/product/${product.id}`">
-              <h2>{{ product.name }}</h2>
+              <h2>{{ truncate(product.name, 30) }}</h2>
             </router-link>
-            <p>{{ product.description }}</p>
+            <p>{{  truncate(product.description, 30) }}</p>
             <p class="price">Цена: {{ product.price }} руб.</p>
 
             <!-- Блок отображения размеров -->
@@ -180,6 +180,10 @@ export default {
 
             alert("Товар успешно добавлен в корзину!");
         },
+        truncate(value, length) {
+             if (!value) return '';
+             return value.length > length ? value.substring(0, length) + '...' : value;
+         },
     },
     created() {
         if (this.seasonId) {
