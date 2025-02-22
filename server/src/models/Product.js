@@ -92,9 +92,10 @@ export default (sequelize, DataTypes) => {
             otherKey: 'TypeId',
         });
         Product.belongsToMany(models.Size, {
-            through: 'ProductSize',
+            through: models.ProductSize,
             foreignKey: 'ProductId',
             otherKey: 'SizeId',
+            onDelete: 'CASCADE'
         });
 
         Product.hasMany(models.ProductImage, {

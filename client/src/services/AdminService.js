@@ -1,6 +1,9 @@
 import Api from '@/services/Api';
 
 export default {
+    addProduct(credentials) {
+        return Api().post('/addProduct', credentials);
+    },
     //-----------Claps----------------
     addClaps(credentials) {
         return Api().post('/addClaps', credentials);

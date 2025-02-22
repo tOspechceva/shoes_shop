@@ -1,6 +1,6 @@
 import bd from '../models/index.js';
 
-const { Product, Season, Material, Insulation, Manufacturer, Type, Size} = bd;
+const { Product, Season, Material, Insulation, Manufacturer, Type, Size, ProductImage, ProductSize } = bd;
 
 export default {
     async add(req, res) {
@@ -18,35 +18,53 @@ export default {
                 id_manufacturer: item.id_manufacturer,
                 img: item.img
             });
-
+            console.log("Обработка типов " + ' | \n ');
             // Обработка типов
             if (Array.isArray(item.typeIds)) {
                 await product.setTypes(item.typeIds);
             } else {
                 return res.status(400).send({ error: 'Поле "typeIds" должно быть массивом.' });
             }
-
+            console.log("Обработка застежек " + ' | \n ');
             // Обработка застежек
             if (Array.isArray(item.clapsIds)) {
                 await product.setClaps(item.clapsIds);
             } else {
                 return res.status(400).send({ error: 'Поле "clapsIds" должно быть массивом.' });
             }
-
-            // Обработка размеров
-            if (Array.isArray(item.sizeIds)) {
-                await product.setSizes(item.sizeIds);
+            console.log("Обработка размеров с количеством "+ ' | \n ');
+            /// Обработка размеров с количеством
+            if (!Array.isArray(item.sizes) || item.sizes.length === 0) {
+                return res.status(400).json({ error: "Invalid sizes array" });
             } else {
-                return res.status(400).send({ error: 'Поле "sizeIds" должно быть массивом.' });
+                for (const size of item.sizes) {
+                    console.log(size + ' | ');
+                    const sizeRecord = await Size.findOne({ where: { name: size.value } });
+                    console.log(sizeRecord + ' | ');
+                    if (sizeRecord) {
+                        await ProductSize.create({
+                            ProductId: product.id,
+                            SizeId: sizeRecord.id,
+                            count: size.quantity
+                        });
+                        console.log(true + '\n');
+                    }
+                }
             }
-
             // Обработка цветов
             if (Array.isArray(item.coloreIds)) {
                 await product.setColores(item.coloreIds);
             } else {
                 return res.status(400).send({ error: 'Поле "coloreIds" должно быть массивом.' });
             }
-
+            
+            // Обработка изображений
+            if (Array.isArray(item.imageUrls)) {
+                const productImages = item.imageUrls.map(url => ({ url, ProductId: product.id }));
+                await ProductImage.bulkCreate(productImages); // Сохраняем несколько изображений
+            } else if (item.imageUrls) {
+                return res.status(400).send({ error: 'Поле "imageUrls" должно быть массивом.' });
+            }
             res.send({
                 product: product
             });

@@ -10,9 +10,10 @@ export default (sequelize, DataTypes) => {
 
     Size.associate = (models) => {
         Size.belongsToMany(models.Product, {
-            through: 'ProductSize',
+            through: models.ProductSize,
             foreignKey: 'SizeId',
             otherKey: 'ProductId',
+            onDelete: 'CASCADE'
         });
         // Связь с ProductSize
         Size.hasMany(models.ProductSize, { foreignKey: 'SizeId' });

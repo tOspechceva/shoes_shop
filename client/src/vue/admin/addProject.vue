@@ -195,12 +195,11 @@ export default {
                 console.error("Ошибка при загрузке данных:", error);
             }
         },
-addItem(array, value) {
-  // Генерируем уникальный идентификатор для нового элемента
-  value.uid = Date.now() + '_' + Math.random();
-  array.push(value);
-}
-,
+        addItem(array, value) {
+          // Генерируем уникальный идентификатор для нового элемента
+          value.uid = Date.now() + '_' + Math.random();
+          array.push(value);
+        },
         removeItem(array, index) {
             array.splice(index, 1);
         },
@@ -210,32 +209,7 @@ addItem(array, value) {
                 this.$set(this.product.img, index, file);
             }
         },
-        async addProduct() {
-            try {
-                const formData = new FormData();
-                Object.entries(this.product).forEach(([key, value]) => {
-                    if (key === "img") {
-                        value.forEach((file, index) => {
-                            if (file) {
-                                formData.append(`img[${index}]`, file);
-                            }
-                        });
-                    } else if (Array.isArray(value)) {
-                        formData.append(key, JSON.stringify(value));
-                    } else {
-                        formData.append(key, value);
-                    }
-                });
-                await axios.post("/api/products", formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
-                alert("Товар успешно добавлен!");
-                this.resetForm();
-            } catch (error) {
-                console.error("Ошибка при добавлении товара:", error);
-                alert("Ошибка при добавлении товара.");
-            }
-        },
+       
         resetForm() {
             this.product = {
                 name: "",
@@ -251,8 +225,36 @@ addItem(array, value) {
             };
         },
         addToCart() {
-            console.log(this.product);
+          try {
+            // Формируем объект данных для отправки
+            const productData = {
+              name: this.product.name,
+              price: this.product.price,
+              description: this.product.description,
+              rating: this.product.rating,
+              id_season: this.product.id_season,
+              id_material: this.product.id_material,
+              id_insulation: this.product.id_insulation,
+              id_manufacturer: this.product.id_manufacturer,
+              typeIds: this.product.types,
+              clapsIds: this.product.clasps,
+              sizes: this.product.sizes,
+              coloreIds: this.product.colors,
+              img: this.product.mainImage,
+              imageUrls: this.product.additionalImages,
+            };
 
+            console.log(productData);
+             
+             // Отправляем запрос на сервер
+             const response =  AdminService.addProduct(productData);
+             console.log(response);
+             alert("Товар успешно добавлен!");
+             this.resetForm();
+           } catch (error) {
+               console.error("Ошибка при добавлении товара:", error);
+               alert("Ошибка при добавлении товара.");
+           }
             
             alert("Товар успешно добавлен в корзину!");
         },

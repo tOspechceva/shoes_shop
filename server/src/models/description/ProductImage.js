@@ -4,14 +4,7 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false, // URL изображения обязательно
         },
-        altText: {
-            type: DataTypes.STRING,
-            allowNull: true, // Альтернативный текст (можно оставить пустым)
-        },
-        priority: {
-            type: DataTypes.INTEGER,
-            allowNull: true, // Поле для сортировки изображений (по умолчанию null)
-        },
+        
     }, {
         timestamps: false,
     });
