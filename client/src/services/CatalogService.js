@@ -12,5 +12,6 @@ export default {
     },
     getSeasonsWithTypes() {
         return Api().get('seasons-with-types');
-    }
+    },
+    
 }

@@ -1,31 +1,32 @@
 <template>
-<aside class="sidebar">
+  <aside class="sidebar">
     <h2>Фильтры</h2>
 
     <!-- Сезоны -->
     <h3>Сезоны</h3>
     <ul class="filter-list">
-      <li>
-        <button @click="showAllProducts" class="show-all-button">Все</button>
-      </li>
       <li 
         v-for="season in seasons" 
         :key="season.season_id" 
-        @click="selectSeason(season.season_id)"
-        :class="{ selected: selectedSeason === season.season_id }"
+        @click="toggleSeason(season.season_id)"
+        :class="{ selected: selectedSeasons.includes(season.season_id) }"
         style="cursor: pointer"
       >
         <a>{{ season.season_name }}</a>
-        <ul v-if="selectedSeason === season.season_id" class="type-dropdown">
-          <li 
-            v-for="type in season.types" 
-            :key="type.type_id" 
-            @click.stop="selectType(season.season_id, type.type_id)"
-            :class="{ selected: selectedType === type.type_id }"
-          >
-            <a>{{ type.type_name }}</a>
-          </li>
-        </ul>
+      </li>
+    </ul>
+
+    <!-- Типы -->
+    <h3>Типы</h3>
+    <ul class="filter-list">
+      <li 
+        v-for="type in types" 
+        :key="type.id" 
+        @click="toggleType(type.id)"
+        :class="{ selected: selectedTypes.includes(type.id) }"
+        style="cursor: pointer"
+      >
+        <a>{{ type.name }}</a>
       </li>
     </ul>
 
@@ -35,8 +36,8 @@
       <li 
         v-for="material in materials" 
         :key="material.id" 
-        @click="selectMaterial(material.id)"
-        :class="{ selected: selectedMaterial === material.id }"
+        @click="toggleMaterial(material.id)"
+        :class="{ selected: selectedMaterials.includes(material.id) }"
         style="cursor: pointer"
       >
         {{ material.name }}
@@ -49,8 +50,8 @@
       <li 
         v-for="insulation in insulations" 
         :key="insulation.id" 
-        @click="selectInsulation(insulation.id)"
-        :class="{ selected: selectedInsulation === insulation.id }"
+        @click="toggleInsulation(insulation.id)"
+        :class="{ selected: selectedInsulations.includes(insulation.id) }"
         style="cursor: pointer"
       >
         {{ insulation.name }}
@@ -63,8 +64,8 @@
       <li 
         v-for="manufacturer in manufacturers" 
         :key="manufacturer.id" 
-        @click="selectManufacturer(manufacturer.id)"
-        :class="{ selected: selectedManufacturer === manufacturer.id }"
+        @click="toggleManufacturer(manufacturer.id)"
+        :class="{ selected: selectedManufacturers.includes(manufacturer.id) }"
         style="cursor: pointer"
       >
         {{ manufacturer.name }}
@@ -77,8 +78,8 @@
       <li 
         v-for="color in colors" 
         :key="color.id" 
-        @click="selectColor(color.id)"
-        :class="{ selected: selectedColor === color.id }"
+        @click="toggleColor(color.id)"
+        :class="{ selected: selectedColors.includes(color.id) }"
         style="cursor: pointer"
       >
         {{ color.name }}
@@ -91,8 +92,8 @@
       <li 
         v-for="clap in claps" 
         :key="clap.id" 
-        @click="selectClap(clap.id)"
-        :class="{ selected: selectedClap === clap.id }"
+        @click="toggleClap(clap.id)"
+        :class="{ selected: selectedClaps.includes(clap.id) }"
         style="cursor: pointer"
       >
         {{ clap.name }}
@@ -103,21 +104,22 @@
 
 
 
+
 <script scoped>
 import CatalogService from '@/services/CatalogService.js';
 import AdminService from '@/services/AdminService';
 
 export default {
   name: 'Sidebar',
-   data() {
+  data() {
     return {
-      selectedSeason: null,
-      selectedType: null,
-      selectedMaterial: null,
-      selectedInsulation: null,
-      selectedManufacturer: null,
-      selectedColor: null,
-      selectedClap: null,
+      selectedSeasons: [],
+      selectedTypes: [],
+      selectedMaterials: [],
+      selectedInsulations: [],
+      selectedManufacturers: [],
+      selectedColors: [],
+      selectedClaps: [],
 
       seasons: null,
       materials: [],
@@ -125,6 +127,7 @@ export default {
       manufacturers: [],
       colors: [],
       claps: [],
+      types: [],
     };
   },
   methods: {
@@ -136,11 +139,20 @@ export default {
         console.error('Ошибка при загрузке сезонов:', error);
       }
     },
+    async getType() {
+      try {
+        
+        const response = await AdminService.getType();
+        console.log("Все типы", );
+        this.types = response.data;
+      } catch (error) {
+        console.error('Ошибка при загрузке сезонов:', error);
+      }
+    },
     async getMaterials() {
       try {
         const res = await AdminService.getMaterial();
         this.materials = res.data;
-        console.log(res);
       } catch (error) {
         console.error('Ошибка при загрузке материалов:', error);
       }
@@ -177,46 +189,63 @@ export default {
         console.error('Ошибка при загрузке застёжек:', error);
       }
     },
-     selectSeason(seasonId) {
-    
-        // Выбираем сезон, передаем его id на страницу каталога
-        this.selectedSeason = this.selectedSeason === seasonId ? null: seasonId;
-        // Отправляем событие с выбранным сезоном
-        this.$emit('season-selected', { seasonId });
+
+    toggleItem(array, id) {
+      const index = array.indexOf(id);
+      if (index === -1) {
+        array.push(id);
+      } else {
+        array.splice(index, 1);
+      }
     },
-    selectType(seasonId, typeId) {
-       
-        this.selectedSeason = this.selectedSeason === seasonId ? null :   seasonId;
-        this.selectedType = this.selectedType === typeId ? null : typeId;
-        // Передаем id сезона и id типа на страницу каталога
-        this.$emit('type-selected', { seasonId, typeId });
+
+    toggleSeason(seasonId) {
+      this.toggleItem(this.selectedSeasons, seasonId);
+      this.$emit('season-selected', { seasonIds: this.selectedSeasons });
     },
-    selectMaterial(materialId) {
-      this.selectedMaterial = materialId;
-      this.$emit('material-selected', { materialId });
+    toggleType(typeId) {
+      this.toggleItem(this.selectedTypes, typeId);
+      this.$emit('type-selected', { typeIds: this.selectedTypes });
     },
-    selectInsulation(insulationId) {
-      this.selectedInsulation = insulationId;
-      this.$emit('insulation-selected', { insulationId });
+    toggleMaterial(materialId) {
+      this.toggleItem(this.selectedMaterials, materialId);
+      this.$emit('material-selected', { materialIds: this.selectedMaterials });
     },
-    selectManufacturer(manufacturerId) {
-      this.selectedManufacturer = manufacturerId;
-      this.$emit('manufacturer-selected', { manufacturerId });
+    toggleInsulation(insulationId) {
+      this.toggleItem(this.selectedInsulations, insulationId);
+      this.$emit('insulation-selected', { insulationIds: this.selectedInsulations });
     },
-    selectColor(colorId) {
-      this.selectedColor = colorId;
-      this.$emit('color-selected', { colorId });
+    toggleManufacturer(manufacturerId) {
+      this.toggleItem(this.selectedManufacturers, manufacturerId);
+      this.$emit('manufacturer-selected', { manufacturerIds: this.selectedManufacturers });
     },
-    selectClap(clapsId) {
-      this.selectedClap = clapsId; // измените с selectedClaps на selectedClap
-      this.$emit('claps-selected', { clapsId });
+    toggleColor(colorId) {
+      this.toggleItem(this.selectedColors, colorId);
+      this.$emit('color-selected', { colorIds: this.selectedColors });
     },
+    toggleClap(clapsId) {
+      this.toggleItem(this.selectedClaps, clapsId);
+      this.$emit('claps-selected', { clapsIds: this.selectedClaps });
+    },
+
     showAllProducts() {
+      // Сброс всех фильтров
+      this.selectedSeasons = [];
+      this.selectedTypes = [];
+      this.selectedMaterials = [];
+      this.selectedInsulations = [];
+      this.selectedManufacturers = [];
+      this.selectedColors = [];
+      this.selectedClaps = [];
+
+      this.$emit('reset-filters');
       this.$router.push({ name: 'catalog' });
     }
   },
+
   created() {
     this.getSeason();
+    this.getType();
     this.getMaterials();
     this.getInsulations();
     this.getManufacturers();
@@ -227,61 +256,96 @@ export default {
 </script>
 
 
+
 <style scoped>
 .sidebar {
-  width: 200px;
+  width: 240px;
   padding: 20px;
-  background-color: #f4f4f4;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.sidebar h2 {
-  font-size: 20px;
+.sidebar h2,
+.sidebar h3 {
+  margin-bottom: 10px;
+  color: #333;
 }
 
-.season-list {
+.filter-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin-bottom: 20px;
 }
 
-.season-item {
-  background-color: #f4f4f4;
-  color: #000;
-  padding: 8px;
+.filter-list li {
+  padding: 8px 12px;
+  margin-bottom: 4px;
   cursor: pointer;
-  position: relative;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
-.season-item a {
+.filter-list li:hover {
+  background-color: #e6f2ed;
+}
+
+.filter-list li.selected {
+  background-color: #a5c7ac;
+  color: #fff;
+  font-weight: bold;
+}
+
+.show-all-button {
+  background: none;
+  border: none;
+  color: #006400;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.show-all-button:hover {
+  background-color: #e0f0e9;
+  color: #004d30;
+}
+
+.season-item a,
+.type-dropdown a {
   text-decoration: none;
   color: inherit;
 }
 
 .season-item.selected {
-  background-color: #e0e0e0; /* Цвет фона выбранного сезона */
+  background-color: #c8e6c9;
 }
 
 .type-dropdown {
   list-style: none;
-  padding: 10px;
+  padding: 8px 12px;
   background-color: #f0f0f0;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 0;
-
-  max-height: 200px; /* Примерно высота для 5 элементов по 40px */
-  overflow-y: auto;  /* Добавление вертикальной прокрутки */
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-left: 2px solid #a5c7ac;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 4px;
 }
 
 .type-dropdown li {
-  padding: 5px 0;
-  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
 }
-.type-dropdown :hover{
-    background-color: #a5c7ac;
-}
+
 .type-dropdown li:hover {
-  background-color: #f0f0f0; /* При наведении на тип */
+  background-color: #d7f0e2;
+}
+
+.type-dropdown li.selected {
+  background-color: #a5c7ac;
+  color: #fff;
+  font-weight: bold;
 }
 
 .type-dropdown::-webkit-scrollbar {
@@ -289,7 +353,7 @@ export default {
 }
 
 .type-dropdown::-webkit-scrollbar-thumb {
-  background-color: #ccc;
+  background-color: #bbb;
   border-radius: 3px;
 }
 

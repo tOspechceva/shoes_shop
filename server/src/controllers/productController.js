@@ -1,5 +1,6 @@
 
 import bd from '../models/index.js';
+import { Op } from 'sequelize';
 
 const { Product, Season, Material, Insulation, Manufacturer, Type, Size, ProductImage, ProductSize, Colore, Claps } = bd;
 
@@ -176,6 +177,7 @@ export default {
             res.status(400).json({ error: error.message });
         }
     },
+
     async getPaginated(req, res) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -184,76 +186,81 @@ export default {
 
             // Получаем все параметры фильтрации из запроса
             const {
-                seasonId, typeId, colorId, materialId,
-                insulationId, clapsId, manufacturerId, sizeId
+                seasonIds, typeIds, colorIds, materialIds,
+                insulationIds, clapsIds, manufacturerIds, sizeIds
             } = req.query;
 
             let whereConditions = {};
             let includeConditions = [];
 
-            if (seasonId) {
-                whereConditions.id_season = seasonId;
-            }
-            if (colorId) {
-                includeConditions.push({
-                    model: Colore,  // Модель цвета
-                    where: { id: colorId },  // Условие фильтрации по цвету
-                    through: { attributes: [] }  // Если используется промежуточная таблица, не нужно извлекать дополнительные атрибуты из нее
-                });
-            }
-            if (materialId) {
-                whereConditions.id_material = materialId;
-            }
-            if (insulationId) {
-                whereConditions.id_insulation = insulationId;
-            }
-            if (clapsId) {
-              
-                includeConditions.push({
-                    model: Claps,  // Модель 
-                    where: { id: clapsId },  // Условие фильтрации по 
-                    through: { attributes: [] }  // Если используется промежуточная таблица, не нужно извлекать дополнительные атрибуты из нее
-                });
-            }
-            if (manufacturerId) {
-                whereConditions.id_manufacturer = manufacturerId;
+            if (seasonIds) {
+                whereConditions.id_season = {
+                    [Op.in]: Array.isArray(seasonIds) ? seasonIds : [seasonIds]
+                };
             }
 
-            if (typeId) {
+            if (materialIds) {
+                whereConditions.id_material = {
+                    [Op.in]: Array.isArray(materialIds) ? materialIds : [materialIds]
+                };
+            }
+
+            if (insulationIds) {
+                whereConditions.id_insulation = {
+                    [Op.in]: Array.isArray(insulationIds) ? insulationIds : [insulationIds]
+                };
+            }
+
+            if (manufacturerIds) {
+                whereConditions.id_manufacturer = {
+                    [Op.in]: Array.isArray(manufacturerIds) ? manufacturerIds : [manufacturerIds]
+                };
+            }
+
+            if (colorIds) {
+                includeConditions.push({
+                    model: Colore,
+                    where: { id: { [Op.in]: Array.isArray(colorIds) ? colorIds : [colorIds] } },
+                    through: { attributes: [] }
+                });
+            }
+
+            if (clapsIds) {
+                includeConditions.push({
+                    model: Claps,
+                    where: { id: { [Op.in]: Array.isArray(clapsIds) ? clapsIds : [clapsIds] } },
+                    through: { attributes: [] }
+                });
+            }
+
+            if (typeIds) {
                 includeConditions.push({
                     model: Type,
-                    where: { id: typeId },
-                    through: {
-                        attributes: [],
-                    },
+                    where: { id: { [Op.in]: Array.isArray(typeIds) ? typeIds : [typeIds] } },
+                    through: { attributes: [] }
                 });
             }
 
-            // Добавляем размеры
-            if (sizeId) {
+            // Размеры (обязательно добавляем, даже если фильтра нет — чтобы получить count)
+            if (sizeIds) {
                 includeConditions.push({
                     model: Size,
-                    where: { id: sizeId }, // фильтрация по sizeId
-                    through: {
-                        attributes: ['count'],
-                    },
+                    where: { id: { [Op.in]: Array.isArray(sizeIds) ? sizeIds : [sizeIds] } },
+                    through: { attributes: ['count'] }
                 });
             } else {
                 includeConditions.push({
                     model: Size,
-                    through: {
-                        attributes: ['count'],
-                    },
+                    through: { attributes: ['count'] }
                 });
             }
 
-            // Выполняем запрос с фильтрами
             const { rows: products, count } = await Product.findAndCountAll({
                 where: whereConditions,
                 limit,
                 offset,
                 distinct: true,
-                include: includeConditions,
+                include: includeConditions
             });
 
             const formattedProducts = products.map(product => ({
@@ -266,15 +273,15 @@ export default {
                 sizes: product.Sizes.map(size => ({
                     id: size.id,
                     name: size.name,
-                    count: size.ProductSize.count,
-                })),
+                    count: size.ProductSize.count
+                }))
             }));
 
             res.status(200).json({
                 products: formattedProducts,
                 total: count,
                 totalPages: Math.ceil(count / limit),
-                currentPage: page,
+                currentPage: page
             });
 
         } catch (error) {

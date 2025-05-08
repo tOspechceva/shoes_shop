@@ -19,12 +19,12 @@
 
   @season-selected="handleSeasonSelect"
   @type-selected="handleTypeSelect"
-  @color-selected="selectedColorId = $event.colorId; fetchProducts()"
-  @material-selected="selectedMaterialId = $event.materialId; fetchProducts()"
-  @insulation-selected="selectedInsulationId = $event.insulationId; fetchProducts()"
-  @claps-selected="selectedClapsId = $event.clapsId; fetchProducts()"
-  @manufacturer-selected="selectedManufacturerId = $event.manufacturerId; fetchProducts()"
-  @size-selected="selectedSizeId = $event.sizeId; fetchProducts()"
+  @color-selected="selectedColorIds = $event.colorIds; fetchProducts()"
+  @material-selected="selectedMaterialIds = $event.materialIds; fetchProducts()"
+  @insulation-selected="selectedInsulationIds = $event.insulationIds; fetchProducts()"
+  @claps-selected="selectedClapsIds = $event.clapsIds; fetchProducts()"
+  @manufacturer-selected="selectedManufacturerIds = $event.manufacturerIds; fetchProducts()"
+  @size-selected="selectedSizeIds = $event.sizeIds; fetchProducts()"
 />
 
         <main>
@@ -50,7 +50,7 @@
               <p>Доступные размеры:</p>
               <ul>
                 <li v-for="size in product.sizes" :key="size.id" 
-                    :class="{ selected: selectedSizes[product.id] === size.id }"
+                    :class="{ selected: selectedSizes[product.id] && selectedSizes[product.id] === size.id }"
                     @click="selectSize(product.id, size.id)">
                          {{ size.name }} 
                 </li>
@@ -113,46 +113,43 @@ export default {
     },
     data() {
         return {
-            products: [],               // Массив для товаров
-            currentPage: 1,             // Текущая страница
-            totalPages: 1,              // Общее количество страниц
-            itemsPerPage: 15,           // Количество товаров на странице
-            selectedSeasonId: null,    // id выбранного сезона
-            selectedTypeId: null,       // id выбранного типа
-            selectedSizes: {},          // Хранит выбранные размеры по id товара
-            selectedColorId: null,
-            selectedMaterialId: null,
-            selectedInsulationId: null,
-            selectedClapsId: null,
-            selectedManufacturerId: null,
-            selectedSizeId: null,
-            selectedMaterialIds: [],
-            selectedColorIds: [],
-            selectedInsulationIds: [],
-            selectedManufacturerIds: [],
-            selectedClapsIds: [],
-            selectedSizeIds: [],
+          products: [],
+          currentPage: 1,
+          totalPages: 1,
+          itemsPerPage: 15,
+          selectedSizes: {},  
+          selectedSeasonIds: [],
+          selectedTypeIds: [],
+          selectedColorIds: [],
+          selectedMaterialIds: [],
+          selectedInsulationIds: [],
+          selectedClapsIds: [],
+          selectedManufacturerIds: [],
+          selectedSizeIds: [],
         };
     },
     methods: {
+        
         async fetchProducts(page = 1) {
             try {
                 const params = {
-                    page: page,
-                    limit: this.itemsPerPage,
+                page,
+                limit: this.itemsPerPage,
+                seasonIds: this.selectedSeasonIds,
+                typeIds: this.selectedTypeIds,
+                colorIds: this.selectedColorIds,
+                materialIds: this.selectedMaterialIds,
+                insulationIds: this.selectedInsulationIds,
+                clapsIds: this.selectedClapsIds,
+                manufacturerIds: this.selectedManufacturerIds,
+                sizeIds: this.selectedSizeIds
                 };
-                  console.log("Застежка выбрана ", this.selectedClapsId);
-                if (this.selectedSeasonId !== null) params.seasonId = this.selectedSeasonId;
-                if (this.selectedTypeId !== null) params.typeId = this.selectedTypeId;
-                if (this.selectedColorId !== null) params.colorId = this.selectedColorId;
-                if (this.selectedMaterialId !== null) params.materialId = this.selectedMaterialId;
-                if (this.selectedInsulationId !== null) params.insulationId = this.selectedInsulationId;
-                if (this.selectedClapsId !== null) params.clapsId = this.selectedClapsId;
-                if (this.selectedManufacturerId !== null) params.manufacturerId = this.selectedManufacturerId;
-                if (this.selectedSizeId !== null) params.sizeId = this.selectedSizeId;
 
                 const response = await CatalogService.paginated({ params });
                 const data = response.data;
+                console.log('Полученные товары:', data.products);
+                console.log('Всего товаров:', data.total);
+                console.log('Текущая страница:', data.currentPage);
                 this.products = data.products;
                 this.currentPage = data.currentPage;
                 this.totalPages = data.totalPages;
@@ -165,29 +162,20 @@ export default {
                 this.fetchProducts(page);
             }
         },
-        handleSeasonSelect({ seasonId }) {
-            // Обновляем выбранный id сезона
-            this.selectedSeasonId = seasonId;
-            this.selectedTypeId = null;
-            this.fetchProducts(); // Загрузка товаров с новым seasonId
+        handleSeasonSelect({ seasonIds }) {
+         console.log('Полученные сезоны:', seasonIds);
+         this.selectedSeasonIds = seasonIds;
+         this.fetchProducts(); // Загружаем товары с обновлёнными фильтрами
         },
-        handleTypeSelect({ seasonId, typeId }) {
-            // Обновляем выбранные id сезона и типа
-            this.selectedSeasonId = seasonId;
-            this.selectedTypeId = typeId;
+        handleTypeSelect({ typeIds }) {
+            this.selectedTypeIds = typeIds;
             this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
         },
-        handleColorSelect({ colorId }) {
+        handleColorSelect({ colorIds }) {
             // Обновляем выбранные id сезона и типа
-            this.selectedColorId= colorId;
+            this.selectedColorIds= colorIds;
             this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
         },
-
-
-
-
-
-
 
 
         // Метод для выбора размера
