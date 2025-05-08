@@ -1,7 +1,10 @@
 <template>
      <nav class="main-nav">
         <ul>
-        <li><router-link :to="{ name: 'AddProduct' }"> Обувь </router-link></li>
+        <li><router-link :to="{ name: 'AddProduct' }"> Добавление обуви </router-link></li>
+
+         <li><router-link :to="{ name: 'EditProduct' }"> Обновление обуви </router-link></li>
+         
         <li><router-link :to="{ name: 'addClaps' }"> Застежка </router-link></li>
 
         <li><router-link :to="{ name: 'addColore' }"> Цвет </  router-link></li>

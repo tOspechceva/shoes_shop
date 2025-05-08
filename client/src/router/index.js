@@ -19,6 +19,7 @@ import addSeason from '@/vue/admin/description/addSeason.vue'
 import addSize from '@/vue/admin/description/addSize.vue'
 import addType from '@/vue/admin/description/addType.vue'
 import addInsulation from '@/vue/admin/description/addInsulation.vue'
+import EditProduct from '@/vue/admin/EditProduct.vue'
 const routes = [{
   path: '/',
   name: 'home',
@@ -68,7 +69,11 @@ const routes = [{
     path: '/add-product',
     name: 'AddProduct',
     component: AddProduct,
-  },{
+  }, {
+    path: '/edit-product',
+    name: 'EditProduct',
+    component: EditProduct,
+  }, {
     path: '/add-claps',
     name: 'addClaps',
     component: addClaps,

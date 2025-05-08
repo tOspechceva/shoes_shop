@@ -54,28 +54,27 @@ export default createStore({
     },
     actions: {
         async initializeCart({ commit, state }) {
+            console.log("sessionKey перед проверкой:", state.sessionKey);
             if (!state.sessionKey) {
-                // Генерация нового session_key
                 const sessionKey = uuidv4();
-                commit('setSessionKey', sessionKey); // Устанавливаем sessionKey в state и localStorage
+                commit('setSessionKey', sessionKey);
+                Cookies.set('sessionKey', sessionKey);
+                console.log("Новый sessionKey:", sessionKey);
 
                 try {
-                    // Создание записи корзины на сервере
                     const response = await AuthenticationService.createCart({ session_key: sessionKey });
-                    const data = response.data;
-                    console.log(response, data);
-                    if (!data.success) {
-                        console.error('Ошибка создания корзины:', data.error);
+                    console.log("Ответ от сервера:", response);
+                    if (response.data.success) {
+                        commit('setCartId', response.data.cart_id);
                     } else {
-                        commit('setCartId', data.cart_id); // Сохранение ID корзины
+                        console.error("Ошибка создания корзины:", response.data.error);
                     }
                 } catch (error) {
-                    console.error('Ошибка при вызове AuthenticationService.createCart:', error);
+                    console.error("Ошибка при вызове createCart:", error);
                 }
-
-                // Сохраняем sessionKey в Cookies
-                Cookies.set('sessionKey', sessionKey);
-            } 
+            } else {
+                console.log("sessionKey уже существует, корзина не создается.");
+            }
         },
 
         async login({ commit, dispatch }, { user_id, token }) {

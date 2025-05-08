@@ -4,6 +4,10 @@ export default {
     addProduct(credentials) {
         return Api().post('/addProduct', credentials);
     },
+    getProduct() {
+        return Api().get('/products/${id}');
+    },
+    
     //-----------Claps----------------
     addClaps(credentials) {
         return Api().post('/addClaps', credentials);

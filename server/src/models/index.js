@@ -3,7 +3,7 @@ import { Sequelize, DataTypes } from 'sequelize'; // Импортируем Sequ
 import config from '../config/config.js'; // Импортируем конфигурацию базы данных
 
 import User from './userModel.js'; // Именованный импорт
-import Role from './Role.js';
+
 
 import Product from './Product.js';
 
@@ -22,9 +22,12 @@ import ProductSize from './manyToMany/ProductSize.js';
 import ProductType from './manyToMany/ProductType.js';
 
 import Order from './basket/Orders.js';
+import Delivery from './basket/Delivery.js';
+import Favorite from './basket/Favorite.js';
 import Cart from './basket/Cart.js'
 import CartItem from './basket/CartItem.js';
 import ProductImage from './description/ProductImage.js';
+
 
 // Инициализация подключения к базе данных
 const sequelize = new Sequelize(
@@ -44,7 +47,7 @@ sequelize.authenticate().then(() => {
 // Экспортируем подключение и Sequelize
 const db = {
     User: User(sequelize, DataTypes),
-    Role: Role(sequelize, Sequelize.DataTypes),
+    
     
     Product: Product(sequelize, Sequelize.DataTypes),
     
@@ -63,6 +66,8 @@ const db = {
     ProductType: ProductType(sequelize),
 
     Order: Order(sequelize, Sequelize.DataTypes),
+    Delivery: Delivery(sequelize, Sequelize.DataTypes),
+    Favorite: Favorite(sequelize, Sequelize.DataTypes),
     Cart: Cart(sequelize, Sequelize.DataTypes),
     CartItem: CartItem(sequelize, Sequelize.DataTypes),
     ProductImage: ProductImage(sequelize, Sequelize.DataTypes),

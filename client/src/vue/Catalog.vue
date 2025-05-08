@@ -7,12 +7,26 @@
 
          <div class="catalog-page">
             
-       <Sidebar 
-       :seasonId="seasonId"
-        :typeId="typeId"
-      @season-selected="handleSeasonSelect"
-      @type-selected="handleTypeSelect" 
-    />
+<Sidebar  
+  :seasonId="selectedSeasonId"
+  :typeId="selectedTypeId"
+  :colorId="selectedColorId"
+  :materialId="selectedMaterialId"
+  :insulationId="selectedInsulationId"
+  :clapsId="selectedClapsId"
+  :manufacturerId="selectedManufacturerId"
+  :sizeId="selectedSizeId"
+
+  @season-selected="handleSeasonSelect"
+  @type-selected="handleTypeSelect"
+  @color-selected="selectedColorId = $event.colorId; fetchProducts()"
+  @material-selected="selectedMaterialId = $event.materialId; fetchProducts()"
+  @insulation-selected="selectedInsulationId = $event.insulationId; fetchProducts()"
+  @claps-selected="selectedClapsId = $event.clapsId; fetchProducts()"
+  @manufacturer-selected="selectedManufacturerId = $event.manufacturerId; fetchProducts()"
+  @size-selected="selectedSizeId = $event.sizeId; fetchProducts()"
+/>
+
         <main>
         <h2>Каталог Мужской Обуви</h2>
         
@@ -79,12 +93,12 @@
 </template>
 
 <script>
-import Navigation from '../components/Navigation.vue'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue';
+import Navigation from './components/Navigation.vue'
+import Header from './components/Header.vue'
+import Footer from './components/Footer.vue';
 
-import Filter from '../components/Filter.vue';
-import Sidebar from '../components/Sidebar.vue'
+import Filter from './components/Filter.vue';
+import Sidebar from './components/Sidebar.vue'
 import AuthenticationService from '@/services/AuthenticationService.js';
 import CatalogService from '@/services/CatalogService.js';
 export default {
@@ -106,6 +120,18 @@ export default {
             selectedSeasonId: null,    // id выбранного сезона
             selectedTypeId: null,       // id выбранного типа
             selectedSizes: {},          // Хранит выбранные размеры по id товара
+            selectedColorId: null,
+            selectedMaterialId: null,
+            selectedInsulationId: null,
+            selectedClapsId: null,
+            selectedManufacturerId: null,
+            selectedSizeId: null,
+            selectedMaterialIds: [],
+            selectedColorIds: [],
+            selectedInsulationIds: [],
+            selectedManufacturerIds: [],
+            selectedClapsIds: [],
+            selectedSizeIds: [],
         };
     },
     methods: {
@@ -115,28 +141,21 @@ export default {
                     page: page,
                     limit: this.itemsPerPage,
                 };
-
-                // Добавляем параметры фильтрации только если они не null
-                if (this.seasonId !== null) {
-                    params.seasonId = this.seasonId;
-                    if (this.typeId !== null) {
-                        params.typeId = this.typeId;
-                    }
-                }
-                if (this.selectedSeasonId !== null) {
-                    params.seasonId = this.selectedSeasonId;
-                }
-                if (this.selectedTypeId !== null) {
-                    params.typeId = this.selectedTypeId;
-                }
+                  console.log("Застежка выбрана ", this.selectedClapsId);
+                if (this.selectedSeasonId !== null) params.seasonId = this.selectedSeasonId;
+                if (this.selectedTypeId !== null) params.typeId = this.selectedTypeId;
+                if (this.selectedColorId !== null) params.colorId = this.selectedColorId;
+                if (this.selectedMaterialId !== null) params.materialId = this.selectedMaterialId;
+                if (this.selectedInsulationId !== null) params.insulationId = this.selectedInsulationId;
+                if (this.selectedClapsId !== null) params.clapsId = this.selectedClapsId;
+                if (this.selectedManufacturerId !== null) params.manufacturerId = this.selectedManufacturerId;
+                if (this.selectedSizeId !== null) params.sizeId = this.selectedSizeId;
 
                 const response = await CatalogService.paginated({ params });
-                const data = response.data; // Axios возвращает данные в `response.data`
+                const data = response.data;
                 this.products = data.products;
                 this.currentPage = data.currentPage;
                 this.totalPages = data.totalPages;
-
-
             } catch (error) {
                 console.error('Ошибка при загрузке товаров:', error);
             }
@@ -158,6 +177,19 @@ export default {
             this.selectedTypeId = typeId;
             this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
         },
+        handleColorSelect({ colorId }) {
+            // Обновляем выбранные id сезона и типа
+            this.selectedColorId= colorId;
+            this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
+        },
+
+
+
+
+
+
+
+
         // Метод для выбора размера
         selectSize(productId, sizeId) {
             this.selectedSizes = { ...this.selectedSizes, [productId]: sizeId };

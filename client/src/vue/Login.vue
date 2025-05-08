@@ -5,12 +5,12 @@
         <form @submit.prevent="login">
             <div class="login_container">
                 <h2>Авторизация</h2>
-                <label for="email">Email:</label>
+                <label for="identifier">Email или номер телефона:</label>
                 <input
-                    type="email"
-                    name="email"
-                    v-model="email"
-                    placeholder="email"
+                    type="text"
+                    name="identifier"
+                    v-model="identifier"
+                    placeholder="Введите email или номер телефона"
                 />
 
                 <label for="password">Пароль:</label>
@@ -18,7 +18,7 @@
                     type="password"
                     name="password"
                     v-model="password"
-                    placeholder="password"
+                    placeholder="Введите пароль"
                 />
                 <br />
                 <div class="error" v-if="error">{{ error }}</div>
@@ -36,16 +36,16 @@
 
 <script>
 import AuthenticationService from '@/services/AuthenticationService';
-import Navigation from '../components/Navigation.vue'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue';
+import Navigation from './components/Navigation.vue';
+import Header from './components/Header.vue';
+import Footer from './components/Footer.vue';
 
 export default {
     name: 'Login',
     components: { Navigation, Header, Footer },
     data() {
         return {
-            email: '',
+            identifier: '',
             password: '',
             error: null,
         };
@@ -54,16 +54,16 @@ export default {
         async login() {
             try {
                 const response = await AuthenticationService.login({
-                    email: this.email,
+                    identifier: this.identifier,
                     password: this.password,
                 });
                 const data = response.data;
-            
+                
                 this.$store.dispatch('login', {
                     user_id: data.user.id,
-                    token: response.data.token,
+                    token: data.token,
                 });
-
+                
                 this.$router.push('/profile');
             } catch (error) {
                 this.error = error.response?.data?.error || 'Ошибка авторизации';
@@ -72,6 +72,7 @@ export default {
     },
 };
 </script>
+
 
 <style scoped>
 .login_container {
@@ -86,7 +87,7 @@ export default {
 h2 {
     text-align: center;
 }
-input[type="email"], input[type="password"] {
+input[type="text"], input[type="password"] {
     width: 93%;
     padding: 10px;
     margin: 10px 0;

@@ -1,5 +1,13 @@
 export default (sequelize, DataTypes) => {
     const Delivery = sequelize.define('Delivery', {
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'Users',
+                key: 'id',
+            },
+        },
         address: {
             type: DataTypes.TEXT,
             allowNull: false,
@@ -12,6 +20,9 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             defaultValue: 'Ожидание',
         },
+    }, {
+        tableName: 'Deliveries',
+        timestamps: true,
     });
 
     Delivery.associate = (models) => {
@@ -20,3 +31,4 @@ export default (sequelize, DataTypes) => {
 
     return Delivery;
 };
+

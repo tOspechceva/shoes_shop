@@ -1,6 +1,7 @@
+
 import bd from '../models/index.js';
 
-const { Product, Season, Material, Insulation, Manufacturer, Type, Size, ProductImage, ProductSize } = bd;
+const { Product, Season, Material, Insulation, Manufacturer, Type, Size, ProductImage, ProductSize, Colore, Claps } = bd;
 
 export default {
     async add(req, res) {
@@ -181,46 +182,80 @@ export default {
             const limit = parseInt(req.query.limit) || 10;
             const offset = (page - 1) * limit;
 
-            const { seasonId, typeId } = req.query; // Получаем параметры seasonId и typeId
+            // Получаем все параметры фильтрации из запроса
+            const {
+                seasonId, typeId, colorId, materialId,
+                insulationId, clapsId, manufacturerId, sizeId
+            } = req.query;
 
-            // Строим условия для поиска
             let whereConditions = {};
             let includeConditions = [];
 
-            // Если передан seasonId, добавляем условие фильтрации по сезону
             if (seasonId) {
                 whereConditions.id_season = seasonId;
             }
+            if (colorId) {
+                includeConditions.push({
+                    model: Colore,  // Модель цвета
+                    where: { id: colorId },  // Условие фильтрации по цвету
+                    through: { attributes: [] }  // Если используется промежуточная таблица, не нужно извлекать дополнительные атрибуты из нее
+                });
+            }
+            if (materialId) {
+                whereConditions.id_material = materialId;
+            }
+            if (insulationId) {
+                whereConditions.id_insulation = insulationId;
+            }
+            if (clapsId) {
+              
+                includeConditions.push({
+                    model: Claps,  // Модель 
+                    where: { id: clapsId },  // Условие фильтрации по 
+                    through: { attributes: [] }  // Если используется промежуточная таблица, не нужно извлекать дополнительные атрибуты из нее
+                });
+            }
+            if (manufacturerId) {
+                whereConditions.id_manufacturer = manufacturerId;
+            }
 
-            // Если передан typeId, добавляем условие фильтрации по типу через промежуточную таблицу
             if (typeId) {
                 includeConditions.push({
                     model: Type,
-                    where: { id: typeId }, // Фильтруем по typeId
+                    where: { id: typeId },
                     through: {
-                        attributes: [], // Не возвращаем атрибуты из таблицы связи
+                        attributes: [],
                     },
                 });
             }
 
-            // Добавляем размеры в include
-            includeConditions.push({
-                model: Size,
-                through: {
-                    attributes: ['count'], // Включаем количество доступных размеров
-                },
+            // Добавляем размеры
+            if (sizeId) {
+                includeConditions.push({
+                    model: Size,
+                    where: { id: sizeId }, // фильтрация по sizeId
+                    through: {
+                        attributes: ['count'],
+                    },
+                });
+            } else {
+                includeConditions.push({
+                    model: Size,
+                    through: {
+                        attributes: ['count'],
+                    },
+                });
+            }
+
+            // Выполняем запрос с фильтрами
+            const { rows: products, count } = await Product.findAndCountAll({
+                where: whereConditions,
+                limit,
+                offset,
+                distinct: true,
+                include: includeConditions,
             });
 
-            // Выполняем запрос с возможными условиями фильтрации
-            const { rows: products, count } = await Product.findAndCountAll({
-                where: whereConditions,     // Фильтрация по seasonId
-                limit: limit,
-                offset: offset,
-                distinct: true, // Учитываем только уникальные записи Product
-                include: includeConditions, // Включаем типы, если передан typeId
-            });
-            
-            // Форматируем данные для ответа
             const formattedProducts = products.map(product => ({
                 id: product.id,
                 name: product.name,
@@ -241,6 +276,7 @@ export default {
                 totalPages: Math.ceil(count / limit),
                 currentPage: page,
             });
+
         } catch (error) {
             res.status(400).json({ error: error.message });
         }

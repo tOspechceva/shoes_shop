@@ -220,4 +220,37 @@ nav a:hover {
     display: block;
    
 }
+
+@media (max-width: 1024px) {
+    .main-nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main-nav>ul>li {
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        padding: 0;
+    }
+
+    .main-nav>ul>li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .main-nav a {
+        font-size: 16px;
+        padding: 8px;
+    }
+}
 </style>

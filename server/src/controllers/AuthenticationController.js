@@ -1,7 +1,7 @@
 import bd from '../models/index.js';  // Предположим, что вы экспортировали модели из db.js
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
-
+import { Op } from 'sequelize';
 
 function jwtSignUser(user) {
     const ONE_WEEK = 60 * 60 * 24 * 7
@@ -11,6 +11,7 @@ function jwtSignUser(user) {
 }
 
 const { User } = bd;
+
 
 export default {
     async register(req, res) {
@@ -33,16 +34,21 @@ export default {
     },
     async login(req, res) {
         try {
-            const { email, password } = req.body;
-            console.log('Request body:', req.body);
-
+            const { identifier, password } = req.body;
+        
+            // Определяем, является ли идентификатор email или номером телефона
             const user = await User.findOne({
-                where: { email }
+                where: {
+                    [Op.or]: [
+                        { email: identifier },
+                        { phone: identifier }
+                    ]
+                }
             });
 
             if (!user) {
                 return res.status(403).send({
-                    error: 'Информация для входа неверна (email)'
+                    error: 'Информация для входа неверна (email или телефон)'
                 });
             }
 
