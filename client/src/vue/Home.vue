@@ -30,7 +30,7 @@
         </div>
     </section>
 
-    <Footer></Footer>
+
 </template>
 
 <script>
@@ -106,8 +106,9 @@ h2 {
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
     h2 {
-        font-size: 1.5rem;
+        display: none;
     }
+    
 }
 </style>
 

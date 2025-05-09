@@ -6,8 +6,13 @@
     />
 
          <div class="catalog-page">
-            
+  <!-- Кнопка только для мобильных -->
+<button class="filter-toggle" @click="showSidebar = true">Фильтры</button>
+
 <Sidebar  
+  v-if="showSidebar || isDesktop"
+  :class="{ mobile: !isDesktop }"
+  @close="showSidebar = false"
   :seasonId="selectedSeasonId"
   :typeId="selectedTypeId"
   :colorId="selectedColorId"
@@ -25,18 +30,18 @@
   @claps-selected="selectedClapsIds = $event.clapsIds; fetchProducts()"
   @manufacturer-selected="selectedManufacturerIds = $event.manufacturerIds; fetchProducts()"
   @size-selected="selectedSizeIds = $event.sizeIds; fetchProducts()"
+  @reset-filters="resetFilters"
 />
 
         <main>
-        <h2>Каталог Мужской Обуви</h2>
         
-        <!-- Кнопка для открытия фильтров -->
         
-        <Filter></Filter>
-        
+       
+         <h2 class="name_catalog">Каталог Мужской Обуви</h2>
         
         <!-- Список товаров -->
     <div class="catalog">
+       
           <div class="product" v-for="product in products" :key="product.id">
             <img :src="product.img" :alt="product.name" />
             <router-link :to="`/product/${product.id}`">
@@ -72,12 +77,12 @@
         </button>
 
         <span 
-          v-for="page in totalPages" 
+          v-for="page in visiblePages" 
           :key="page" 
           class="page-number"
           :class="{ active: page === currentPage }"
           @click="handlePageChange(page)">
-            {{ page }}
+          {{ page }}
         </span>
     
         <button class="page-number"
@@ -113,19 +118,21 @@ export default {
     },
     data() {
         return {
-          products: [],
-          currentPage: 1,
-          totalPages: 1,
-          itemsPerPage: 15,
-          selectedSizes: {},  
-          selectedSeasonIds: [],
-          selectedTypeIds: [],
-          selectedColorIds: [],
-          selectedMaterialIds: [],
-          selectedInsulationIds: [],
-          selectedClapsIds: [],
-          selectedManufacturerIds: [],
-          selectedSizeIds: [],
+            products: [],
+            currentPage: 1,
+            totalPages: 1,
+            itemsPerPage: 10,
+            selectedSizes: {},  
+            selectedSeasonIds: [],
+            selectedTypeIds: [],
+            selectedColorIds: [],
+            selectedMaterialIds: [],
+            selectedInsulationIds: [],
+            selectedClapsIds: [],
+            selectedManufacturerIds: [],
+            selectedSizeIds: [],
+            showSidebar: false,
+            isDesktop: window.innerWidth >= 768
         };
     },
     methods: {
@@ -177,11 +184,23 @@ export default {
             this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
         },
 
+        resetFilters() {
+            this.selectedSeasonIds = [];
+            this.selectedTypeIds = [];
+            this.selectedColorIds = [];
+            this.selectedMaterialIds = [];
+            this.selectedInsulationIds = [];
+            this.selectedClapsIds = [];
+            this.selectedManufacturerIds = [];
+            this.selectedSizeIds = [];
 
+            this.fetchProducts(); // Загрузка товаров с новым typeId и seasonId
+        },
         // Метод для выбора размера
         selectSize(productId, sizeId) {
             this.selectedSizes = { ...this.selectedSizes, [productId]: sizeId };
         },
+
 
         // Метод для добавления товара в корзину
         addToCart(product) {
@@ -203,8 +222,51 @@ export default {
         truncate(value, length) {
              if (!value) return '';
              return value.length > length ? value.substring(0, length) + '...' : value;
-         },
+        },
+         handleResize() {
+           this.isDesktop = window.innerWidth >= 768;
+           if (this.isDesktop) this.showSidebar = false;
+        },
+        async setItemsPerPage() {
+          const width = window.innerWidth;
+
+          if (width <= 480) {
+            this.itemsPerPage = 8;
+          } else if (width <= 768) {
+            this.itemsPerPage = 12;
+          } else if (width <= 1024) {
+            this.itemsPerPage = 12;
+          } else {
+            this.itemsPerPage = 15;
+          }
+
+          this.currentPage = 1; // сбрасываем на первую страницу
+        }
     },
+    mounted() {
+         window.addEventListener('resize', this.handleResize);
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize', this.handleResize);
+    },
+    computed: {
+    visiblePages() {
+        const pages = [];
+
+        if (this.currentPage > 1) {
+          pages.push(this.currentPage - 1);
+        }
+
+        pages.push(this.currentPage);
+
+        if (this.currentPage < this.totalPages) {
+          pages.push(this.currentPage + 1);
+        }
+
+        return pages;
+      }
+    },
+
     created() {
         if (this.seasonId) {
             this.selectedSeasonId = parseInt(this.seasonId); // Устанавливаем выбранный сезон из маршрута
@@ -212,6 +274,7 @@ export default {
         if (this.typeId) {
             this.selectedTypeId = parseInt(this.typeId); // Устанавливаем выбранный тип из маршрута
         }
+        this.setItemsPerPage();
         this.fetchProducts(); // Загрузка товаров
     },
     watch: {
@@ -385,5 +448,163 @@ h2 {
   background-color: #007bff;
   color: white;
   font-weight: bold;
+}
+
+.filter-toggle {
+  display: none;
+  margin: 10px;
+  padding: 10px 15px;
+  background-color: #233870;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .filter-toggle {
+    display: block;
+  }
+}
+/* По умолчанию — 5 товаров */
+.product {
+  width: 20%;
+}
+
+/* <= 1024px — 3 товара */
+@media (max-width: 1430px) {
+  .product {
+    width: 30%;
+  }
+  .product img {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* <= 768px — 2 товара */
+@media (max-width: 1000px) {
+  main{
+    padding: 0;
+    width: 100%;
+}
+.catalog{
+    padding: 5px;
+    width: 99%;
+}
+.product h2 {
+  font-size: 16px; /* размер заголовка */
+}
+.name_catalog {
+    display: none;
+}
+
+.product p {
+  font-size: 14px; /* размер обычного текста */
+}
+
+.price {
+  font-size: 14px; /* размер цены */
+}
+  .product {
+    width: 32%;
+  }
+  .product img {
+    width: 120px;
+    height: 120px;
+  }
+  .product h2,
+    .product p {
+      word-wrap: break-word;     /* Разбивает длинные слова */
+      overflow: hidden;          /* Скрывает всё, что выходит за границы */
+      text-overflow: ellipsis;   /* Добавляет "..." при обрезке */
+      white-space: normal;       /* Разрешает перенос строк */
+      max-width: 100%;           /* Ограничивает ширину текстом карточки */
+    }
+.sizes,
+  .buy-btn {
+    display: none;
+  }
+  .filter-toggle {
+    height: 40px; /* Меньше высоты на телефоне */
+    font-size: 14px; /* Уменьшенный размер шрифта */
+  }
+  .page-number{
+    font-size: 12px;
+  }
+}
+
+
+
+/* <= 480px — 1 товар */
+@media (max-width: 480px) {
+main{
+    padding: 0;
+    width: 100%;
+}
+.catalog{
+    padding: 5px;
+    width: 99%;
+}
+.product h2 {
+  font-size: 16px; /* размер заголовка */
+}
+.name_catalog {
+    display: none;
+}
+
+.product p {
+  font-size: 14px; /* размер обычного текста */
+}
+
+.price {
+  font-size: 14px; /* размер цены */
+}
+  .product {
+    width: 45%;
+  }
+  .product img {
+    width: 120px;
+    height: 120px;
+  }
+  .product h2,
+    .product p {
+      word-wrap: break-word;     /* Разбивает длинные слова */
+      overflow: hidden;          /* Скрывает всё, что выходит за границы */
+      text-overflow: ellipsis;   /* Добавляет "..." при обрезке */
+      white-space: normal;       /* Разрешает перенос строк */
+      max-width: 100%;           /* Ограничивает ширину текстом карточки */
+    }
+.sizes,
+  .buy-btn {
+    display: none;
+  }
+  .filter-toggle {
+    height: 40px; /* Меньше высоты на телефоне */
+    font-size: 14px; /* Уменьшенный размер шрифта */
+  }
+  .page-number{
+    font-size: 10px;
+  }
+}
+.filter-toggle {
+  position: absolute;        /* Абсолютное позиционирование */
+  top: 0;                    /* Располагаем её в верхней части */
+  left: 0;                   /* Привязываем её к левому краю контейнера */
+  width: 50%;               /* Ширина кнопки равна ширине товаров */
+  height: 50px;              /* Высота кнопки */
+  padding: 10px 20px;        /* Внутренние отступы */
+  background-color: #7e7e7e; /* Цвет фона */
+  color: white;              /* Цвет текста */
+  font-size: 16px;           /* Размер шрифта */
+  text-align: center;        /* Центрируем текст */
+  border-radius: 5px;        /* Скругляем углы */
+  cursor: pointer;          /* Указатель при наведении */
+  z-index: 10;               /* Обеспечим, чтобы кнопка была сверху */
+}
+
+.catalog-page {
+  position: relative;        /* Относительное позиционирование для родителя */
+  padding-top: 60px;         /* Отступ сверху для товаров, чтобы кнопка не перекрывала их */
 }
 </style>

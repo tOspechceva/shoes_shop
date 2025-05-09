@@ -77,4 +77,22 @@ h1 {
     width: 200px;
     transition: width 0.3s ease;
 }
+* {
+    box-sizing: border-box;
+}
+@media (max-width: 1023px) {
+    .search-form {
+        display: none;
+    }
+
+    header {
+        width: 100%;
+        padding: 0px;
+        box-sizing: border-box; /* Чтобы padding не выходил за пределы */
+    }
+
+    h1 {
+        font-size: 32px; /* Можно уменьшить размер шрифта для мобильных */
+    }
+}
 </style>

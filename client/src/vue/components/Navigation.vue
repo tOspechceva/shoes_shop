@@ -1,32 +1,35 @@
 <template>
     <div>
-        <nav class="main-nav">
+        <button class="mobile-menu-button" @click="toggleMobileMenu">
+          ☰ Меню
+        </button>
+        <nav class="main-nav" :class="{ open: isMobileMenuOpen }">
         <ul>
         <li><router-link :to="{ name: 'home' }"> Главная </router-link></li>
             <li class="catalog-menu">
                 <router-link :to="{ name: 'catalog' }"> Каталог </router-link>
-            <ul class="season-dropdown">
-                  <li 
-                    class="season-item" 
-                    v-for="(season) in seasons" 
-                    :key="season.season_id"
-                    @click="selectSeason(season.season_id)" 
-                  >
-                    <a>{{ season.season_name }}</a>
-
-                    <!-- Перебираем типы, связанные с сезоном,показываем только для выбранного сезона -->
-                    <ul v-if="selectedSeason === season.season_id" class="type-dropdown">
-                      <li  
-                        v-for="type in season.types" 
-                        :key="type.type_id"
-                        @click="selectType(season.season_id, type.type_id)"
-                        style="cursor: pointer"
-                      >
-                        <a>{{ type.type_name }}</a>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>    
+           <!--  <ul class="season-dropdown">
+           <!--        <li 
+           <!--          class="season-item" 
+           <!--          v-for="(season) in seasons" 
+           <!--          :key="season.season_id"
+           <!--          @click="selectSeason(season.season_id)" 
+           <!--        >
+           <!--          <a>{{ season.season_name }}</a>
+<!-- 
+           <!--          <!-- Перебираем типы, связанные с сезоном,показываем только для <!-- выбранного сезона -->
+           <!--          <ul v-if="selectedSeason === season.season_id" class="type-dropdown">
+           <!--            <li  
+           <!--              v-for="type in season.types" 
+           <!--              :key="type.type_id"
+           <!--              @click="selectType(season.season_id, type.type_id)"
+           <!--              style="cursor: pointer"
+           <!--            >
+           <!--              <a>{{ type.type_name }}</a>
+           <!--            </li>
+           <!--          </ul>
+           <!--        </li>
+           <!--      </ul>    -->
                     
             </li>
             <li> <router-link :to="{ name:'contact'}">Контакты</router-link></li>
@@ -45,13 +48,17 @@ import CatalogService from '@/services/CatalogService.js';
 export default {
     name: 'Navigation',
     data() {
-    return {
+        return {
+        isMobileMenuOpen: false,
       selectedSeason: null, // Инициализация выбранного сезона
       selectedType: null,
       seasons: null
     };
   },
     methods: {
+    toggleMobileMenu() {
+        this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    },
     selectSeason(seasonId) {
         // Переход на страницу каталога с выбранным seasonId
         this.$router.push({ name: 'catalogWithSeason', params: {  seasonId } });
@@ -221,36 +228,63 @@ nav a:hover {
    
 }
 
-@media (max-width: 1024px) {
-    .main-nav ul {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .main-nav>ul>li {
-        margin: 5px 0;
-    }
+/* Бургер-кнопка */
+.mobile-menu-button {
+    display: none;
+    font-size: 24px;
+    background-color: #233870;
+    color: white;
+    padding: 10px;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'Segoe Script', cursive;
 }
-
-@media (max-width: 768px) {
-    nav {
-        flex-direction: column;
-        padding: 5px;
+@media (max-width: 1100px) {
+  .main-nav > ul > li {
+    display: inline-block;
+    position: relative;
+    margin-right: 0px;
+  }
+  .mobile-menu-button {
+    margin-bottom: 10px;
+  }
+  
+}
+@media (max-width: 1490px) {
+  .main-nav > ul > li {
+    display: inline-block;
+    position: relative;
+    margin-right: 100px;
+  }
+}
+@media (max-width: 1080px) {
+    .mobile-menu-button {
+        display: block;
+        border:  10px;   
     }
 
-    .main-nav ul {
+    .main-nav {
+        display: none;
         flex-direction: column;
-        padding: 0;
+        width: 100%;
+    }
+
+    .main-nav.open {
+        display: flex;
     }
 
     .main-nav>ul>li {
-        width: 100%;
-        text-align: center;
+        display: block;
+        margin: 0;
     }
 
-    .main-nav a {
-        font-size: 16px;
-        padding: 8px;
+     /* Скрываем выпадающие списки сезонов и типов */
+    .season-dropdown,
+    .type-dropdown {
+      display: none !important;
     }
+    
+
 }
 </style>

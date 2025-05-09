@@ -1,106 +1,105 @@
 <template>
-  <aside class="sidebar">
+  <<div :class="['sidebar', { mobile: isMobile }]">
+    <!-- Кнопка закрытия для мобильной версии -->
+    <button v-if="isMobile" class="close-btn" @click="$emit('close')">✕</button>
     <h2>Фильтры</h2>
 
     <!-- Сезоны -->
-    <h3>Сезоны</h3>
-    <ul class="filter-list">
+    <h3 @click="toggleSection('seasons')" style="cursor: pointer">Сезоны</h3>
+    <ul v-show="visibleSections.seasons" class="filter-list scrollable-list">
       <li 
         v-for="season in seasons" 
         :key="season.season_id" 
         @click="toggleSeason(season.season_id)"
         :class="{ selected: selectedSeasons.includes(season.season_id) }"
-        style="cursor: pointer"
       >
         <a>{{ season.season_name }}</a>
       </li>
     </ul>
 
     <!-- Типы -->
-    <h3>Типы</h3>
-    <ul class="filter-list">
+    <h3 @click="toggleSection('types')" style="cursor: pointer">Типы</h3>
+    <ul v-show="visibleSections.types" class="filter-list scrollable-list">
       <li 
         v-for="type in types" 
         :key="type.id" 
         @click="toggleType(type.id)"
         :class="{ selected: selectedTypes.includes(type.id) }"
-        style="cursor: pointer"
       >
         <a>{{ type.name }}</a>
       </li>
     </ul>
 
     <!-- Материалы -->
-    <h3>Материалы</h3>
-    <ul class="filter-list">
+    <h3 @click="toggleSection('materials')" style="cursor: pointer">Материалы</h3>
+    <ul v-show="visibleSections.materials" class="filter-list scrollable-list">
       <li 
         v-for="material in materials" 
         :key="material.id" 
         @click="toggleMaterial(material.id)"
         :class="{ selected: selectedMaterials.includes(material.id) }"
-        style="cursor: pointer"
       >
         {{ material.name }}
       </li>
     </ul>
 
     <!-- Утеплители -->
-    <h3>Утеплители</h3>
-    <ul class="filter-list">
+    <h3 @click="toggleSection('insulations')" style="cursor: pointer">Утеплители</h3>
+    <ul v-show="visibleSections.insulations" class="filter-list scrollable-list">
       <li 
         v-for="insulation in insulations" 
         :key="insulation.id" 
         @click="toggleInsulation(insulation.id)"
         :class="{ selected: selectedInsulations.includes(insulation.id) }"
-        style="cursor: pointer"
       >
         {{ insulation.name }}
       </li>
     </ul>
 
     <!-- Производители -->
-    <h3>Производители</h3>
-    <ul class="filter-list">
+    <h3 @click="toggleSection('manufacturers')" style="cursor: pointer">Производители</h3>
+    <ul v-show="visibleSections.manufacturers" class="filter-list scrollable-list">
       <li 
         v-for="manufacturer in manufacturers" 
         :key="manufacturer.id" 
         @click="toggleManufacturer(manufacturer.id)"
         :class="{ selected: selectedManufacturers.includes(manufacturer.id) }"
-        style="cursor: pointer"
       >
         {{ manufacturer.name }}
       </li>
     </ul>
 
     <!-- Цвета -->
-    <h3>Цвета</h3>
-    <ul class="filter-list">
+    <h3 @click="toggleSection('colors')" style="cursor: pointer">Цвета</h3>
+    <ul v-show="visibleSections.colors" class="filter-list scrollable-list">
       <li 
         v-for="color in colors" 
         :key="color.id" 
         @click="toggleColor(color.id)"
         :class="{ selected: selectedColors.includes(color.id) }"
-        style="cursor: pointer"
       >
         {{ color.name }}
       </li>
     </ul>
 
     <!-- Застёжки -->
-    <h3>Застёжки</h3>
-    <ul class="filter-list">
+    <h3 @click="toggleSection('claps')" style="cursor: pointer">Застёжки</h3>
+    <ul v-show="visibleSections.claps" class="filter-list scrollable-list">
       <li 
         v-for="clap in claps" 
         :key="clap.id" 
         @click="toggleClap(clap.id)"
         :class="{ selected: selectedClaps.includes(clap.id) }"
-        style="cursor: pointer"
       >
         {{ clap.name }}
       </li>
     </ul>
-  </aside>
+
+    <!-- Сброс -->
+    <button @click="showAllProducts" class="show-all-button">Показать всё</button>
+   </div>
 </template>
+
 
 
 
@@ -113,6 +112,7 @@ export default {
   name: 'Sidebar',
   data() {
     return {
+      // выбранные
       selectedSeasons: [],
       selectedTypes: [],
       selectedMaterials: [],
@@ -121,6 +121,7 @@ export default {
       selectedColors: [],
       selectedClaps: [],
 
+      // данные
       seasons: null,
       materials: [],
       insulations: [],
@@ -128,9 +129,35 @@ export default {
       colors: [],
       claps: [],
       types: [],
+
+      // управление отображением списков
+      visibleSections: {
+        materials: false,
+        insulations: false,
+        manufacturers: false,
+        colors: false,
+        claps: false,
+        types: false,
+        seasons: true, // по умолчанию открыт
+
+        isMobile: false
+      }
     };
   },
+   mounted() {
+    this.isMobile = window.innerWidth < 768;
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.handleResize);
+  },
   methods: {
+     handleResize() {
+      this.isMobile = window.innerWidth < 768;
+    },
+    toggleSection(section) {
+    this.visibleSections[section] = !this.visibleSections[section];
+    },
     async getSeason() {
       try {
         const response = await CatalogService.getSeasonsWithTypes();
@@ -259,6 +286,10 @@ export default {
 
 <style scoped>
 .sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;           /* Растянуть сайдбар на всю высоту экрана */
+  overflow-y: auto;        /* Вертикальная прокрутка, если контента больше */
   width: 240px;
   padding: 20px;
   background-color: #f9f9f9;
@@ -266,9 +297,25 @@ export default {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Уменьшим отступы у списков, чтобы поместилось больше фильтров */
+.filter-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 16px; /* чуть меньше, чем было */
+}
+
+.filter-list li {
+  padding: 6px 10px;  /* чуть меньше, чтобы влезало больше пунктов */
+  margin-bottom: 3px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+/* Можно прижать заголовки поближе к спискам */
 .sidebar h2,
 .sidebar h3 {
-  margin-bottom: 10px;
+  margin: 8px 0;
   color: #333;
 }
 
@@ -359,5 +406,46 @@ export default {
 
 .type-dropdown::-webkit-scrollbar-track {
   background-color: #f0f0f0;
+}
+.scrollable-list {
+  max-height: 160px; /* около 5 пунктов по 30px + отступы */
+  overflow-y: auto;
+  padding-right: 4px; /* для скролла */
+}
+.scrollable-list::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollable-list::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+  border-radius: 3px;
+}
+
+.sidebar.mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80%;
+  max-width: 300px;
+  height: 100%;
+  background-color: white;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.filter-group {
+  margin-bottom: 20px;
 }
 </style>

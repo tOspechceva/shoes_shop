@@ -1,7 +1,6 @@
 
 import bd from '../models/index.js';
 import { Op } from 'sequelize';
-
 const { Product, Season, Material, Insulation, Manufacturer, Type, Size, ProductImage, ProductSize, Colore, Claps } = bd;
 
 export default {

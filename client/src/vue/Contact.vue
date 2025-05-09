@@ -8,19 +8,21 @@
             <p class="text" >Мы находимся по адресу:Россия, Белгород, Белгородский просп., 87. Ряд 17 место 5.</p>
             <p class="text">Телефон для связи с нами: +7 (952) 425 - 65 - 79 (Алекс)</p>
             <div class="map-container">
-      <iframe
-        src="https://yandex.ru/map-widget/v1/?um=constructor%3A6fdbc05b6deb6cdd39dd51297f4dff65e5015a9193113d1b9092c3772b7630b0&width=500&height=508&lang=ru_RU&scroll=true"
-        width="500"
-        height="400"
-        frameborder="0"
-        style="border:0;"
-        allowfullscreen
-      ></iframe>
+              <div class="map-container">
+                <iframe
+                  src="https://yandex.ru/map-widget/v1/?um=constructor%3A6fdbc05b6deb6cdd39dd51297f4dff65e5015a9193113d1b9092c3772b7630b0&width=500&height=508&lang=ru_RU&scroll=true"
+                  width="500"
+                  height="400"
+                  frameborder="0"
+                  style="border:0;"
+                  allowfullscreen
+                ></iframe>
+              </div>
     </div>
         </section>
     </div>
   </div>
-   <Footer></Footer>
+
 </template>
 
 <script>
@@ -95,5 +97,33 @@ footer {
     padding: 20px;
     text-align: left;
     height: 80%;
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* соотношение сторон карты */
+  height: 0;
+  overflow: hidden;
+}
+
+.map-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 768px) {
+    .container_contact {
+      width: 100%;
+    }
+    .header{
+      font-size: 18px;    /* Размер текста */
+    }
+    .text{
+       font-size: 16px;    /* Размер текста */
+    }
+    
 }
 </style>
