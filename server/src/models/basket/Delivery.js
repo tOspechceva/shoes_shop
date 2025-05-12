@@ -8,13 +8,25 @@ export default (sequelize, DataTypes) => {
                 key: 'id',
             },
         },
-        address: {
-            type: DataTypes.TEXT,
+        full_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        phone: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         delivery_method: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        address: {
+            type: DataTypes.TEXT,
+            allowNull: true, // null, если самовывоз
+        },
+        postal_code: {
+            type: DataTypes.STRING,
+            allowNull: true, // null, если самовывоз
         },
         status: {
             type: DataTypes.STRING,

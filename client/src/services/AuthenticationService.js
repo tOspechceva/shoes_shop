@@ -19,6 +19,16 @@ export default {
     addCartItem(params) {
         return Api().post('/addCartItem', params);  
     },
-
+    placeOrder(params) {
+        return Api().post('/checkout', params); // <-- токен будет добавлен
+    },
+    updateSelectedState(params) {
+        return Api().put('/updateSelectedState', params);
+    },
+    deleteCartItem(params) {
+        return Api().delete('/deleteCartItem', {
+            data: params // Тело запроса передаётся через `data`
+        });
+    }
 }
 

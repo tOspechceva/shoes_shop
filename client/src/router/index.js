@@ -20,7 +20,14 @@ import addSize from '@/vue/admin/description/addSize.vue'
 import addType from '@/vue/admin/description/addType.vue'
 import addInsulation from '@/vue/admin/description/addInsulation.vue'
 import EditProduct from '@/vue/admin/EditProduct.vue'
-const routes = [{
+import Checkout from '@/vue/Checkout.vue'
+const routes = [
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: Checkout,
+  },
+  {
   path: '/',
   name: 'home',
   component: Home
@@ -105,7 +112,7 @@ const routes = [{
     path: '/add-type',
     name: 'addType',
     component: addType,
-  }
+  }, 
 
 ]
 

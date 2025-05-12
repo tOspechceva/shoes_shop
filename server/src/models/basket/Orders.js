@@ -31,6 +31,10 @@ export default (sequelize, DataTypes) => {
                 min: 1,
             },
         },
+        total_price: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: false,
+        }
     }, {
         tableName: 'Orders',
         timestamps: true,
