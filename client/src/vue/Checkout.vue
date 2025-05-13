@@ -13,7 +13,8 @@
         <p class="total">Итого: {{ totalPrice }} руб.</p>
         <div class="delivery-method">
             <label>
-                <input type="radio" value="pickup" v-model="form.deliveryMethod" />
+                <input type="radio" value="pickup" v-model="form.
+                    deliveryMethod" />
                 Самовывоз
             </label>
             <label>

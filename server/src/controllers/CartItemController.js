@@ -5,7 +5,7 @@ export default {
     async add(req, res) {
         try {
             const { cartId, productId, sizeId, quantity } = req.body;
-
+            console.log(req.body);
             // Проверка обязательных данных
             if (!cartId || !productId || !sizeId) {
                 return res.status(400).json({ error: 'Все поля (cartId, productId, sizeId, quantity) обязательны.', cartId, productId, sizeId, quantity });
@@ -14,7 +14,7 @@ export default {
             // Проверка существования корзины
             const cart = await Cart.findByPk(cartId);
             if (!cart) {
-                return res.status(404).json({ error: 'Корзина не найдена.' });
+                return res.status(410).json({ error: 'Корзина не найдена.' });
             }
             console.log("2");
             // Поиск записи в таблице ProductSize на основе productId и sizeId
@@ -26,7 +26,7 @@ export default {
             });
 
             if (!productSize) {
-                return res.status(404).json({ error: 'Указанный товар с таким размером не найден.' });
+                return res.status(405).json({ error: 'Указанный товар с таким размером не найден.' });
             }
             console.log("3");
             // Проверка наличия товара в корзине
